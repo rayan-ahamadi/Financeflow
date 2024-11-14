@@ -1,11 +1,11 @@
 <?php
 
-require '../src/Routes/routes.php';
+require '../src/routes/routes.php';
 require '../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv::createImmutable(__DIR__ . "/../");
 $dotenv->load();
 
 
