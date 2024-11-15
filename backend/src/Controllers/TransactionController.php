@@ -36,7 +36,7 @@ class TransactionController {
             echo json_encode(["message" => "La transaction a été ajouté avec succès"]);
         } else {
             http_response_code(500);
-            echo json_encode(["message" => "Erreur lors de l'ajout d'une transaction"]);
+            echo json_encode(["message" => "Erreur lors de l'ajout d'une transaction et de ses catégories"]);
         }
 
     }
