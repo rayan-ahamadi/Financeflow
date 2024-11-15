@@ -1,7 +1,10 @@
 <?php
 
+// Point d'entrée de l'API REST
+
 require '../src/routes/routes.php';
-require '../vendor/autoload.php';
+include __DIR__ . '/../vendor/autoload.php';
+
 
 use Dotenv\Dotenv;
 

@@ -1,10 +1,8 @@
 <?php
-
-
 namespace App\Controllers;
 
-use App\Database;
 use App\Models\Transaction;
+use App\Database\Database;
 
 class TransactionController {
     private $transactionModel;
@@ -14,17 +12,32 @@ class TransactionController {
         $this->transactionModel = new Transaction($pdo);
     }
 
-    public function addTransaction() {
-        // récupère données de la requêtes
-        $data = json_decode(file_get_contents("php://input"), true);
-
-        // Et appelle la méthode correspondante du model avec les paramètres de la requête
-        if ($this->transactionModel->add($data)) {
+    public function getAllTransaction(){
+        $transactions = $this->transactionModel->getAll();
+        if ($transactions || $transactions === []) {
             http_response_code(201);
-            echo json_encode(["message" => "Transaction ajoutée avec succès."]);
+            echo $transactions === [] ? json_encode(["message" => "La table est vide"]) : json_encode($transactions);
         } else {
             http_response_code(500);
-            echo json_encode(["message" => "Erreur lors de l'ajout de la transaction."]);
+            echo json_encode(["message" => "Erreur lors de la récupération des transactions"]);
         }
+    }
+
+    public function addTransaction($data){
+        if ($data === null) {
+            http_response_code(400); // Mauvaise requête
+            echo json_encode(["message" => "Invalid JSON"]);
+            exit;
+        }
+
+        $addTransactions = $this->transactionModel->add($data);
+        if ($addTransactions) {
+            http_response_code(201);
+            echo json_encode(["message" => "La transaction a été ajouté avec succès"]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["message" => "Erreur lors de l'ajout d'une transaction"]);
+        }
+
     }
 }
