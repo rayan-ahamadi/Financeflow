@@ -125,7 +125,27 @@ class Transaction {
     }
 
     public function delete($id){
+        // supprimer les catégories de la transaction
+        try{
+            $stmtDelCat = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction = ?");
+            $stmtDelCat->execute([$id]);
+        }
+        catch(PDOException $e){
+            echo json_encode(["message" => "Erreur lors de la suppression des catégories", "PDO" => $e]);
+            exit;
+        }
 
+        // supprimer la transaction de sa table
+        try{
+            $stmtTransaction = $this->pdo->prepare("DELETE FROM transaction WHERE id_transaction = ?");
+            $stmtTransaction->execute([$id]);
+        }
+        catch(PDOException $e){
+            echo json_encode(["message" => "Erreur lors de la suppression de la transaction", "PDO" => $e]);
+            exit;
+        }
+
+        return true;
     }
 
     public function update($id,$data){
