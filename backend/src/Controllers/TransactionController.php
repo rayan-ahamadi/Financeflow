@@ -62,7 +62,7 @@ class TransactionController {
     public function updateTransaction($id,$data){
         if (!$id || !$data) {
             http_response_code(400); // Mauvaise requête
-            echo json_encode(["message" => "Requête invalide"]);
+            echo json_encode(["message" => "Requête invalide",]);
             exit;
         }
 

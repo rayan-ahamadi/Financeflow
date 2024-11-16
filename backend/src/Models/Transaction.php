@@ -129,7 +129,61 @@ class Transaction {
     }
 
     public function update($id,$data){
+        $title = $data['title'] ?? null;
+        $typeTransaction = $data['type_transaction'] ?? null;
+        $amount = $data['amount'] ?? null;
+        $date = $data['date'] ?? null;
+        $place = $data['place'] ?? null;
+        $currency_code = $data['currency_code'] ?? null;
+        $currency_symbol = $data['currency_symbol'] ?? null;
+        $categoryList = $data['list_category'] ?? null;
 
+        // Validation des données
+        if (!$title || !$typeTransaction || !$amount || !$date || !$place || !$currency_code || !$currency_symbol  || !$categoryList) {
+            http_response_code(422); // Données non valides
+            echo json_encode(["message" => "Données non valides"]);
+            exit;
+        }
+
+        try {
+            //Modification dans la table transaction
+            $stmtTransaction = $this->pdo->prepare("UPDATE transaction SET title = ?,type_transaction = ?,amount = ?,date = ? ,place = ? ,currency_code = ? ,currency_symbol = ? WHERE id_transaction = ?");
+            $stmtTransaction->execute([
+                $title,
+                $typeTransaction,
+                $amount,
+                $date,
+                $place,
+                $currency_code,
+                $currency_symbol,
+                $id
+            ]);
+
+        }
+        catch(PDOException $e) {
+            echo json_encode(["message" => "Erreur lors de la modification de la transaction", "PDO" => $e]);
+            exit;
+        }
+
+        try{
+            // Modification dans la table de jointure Transactions_Categories
+            $stmtDelCat = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction = ?");
+            $stmtDelCat->execute([$id]);
+
+            foreach($categoryList as &$category){
+                $stmtCategory = $this->pdo->prepare("INSERT INTO transactions_categories (id_transaction,id_category) VALUES (?,?)");
+                $stmtCategory->execute([
+                    $id,
+                    $category
+                ]);
+            }
+        }
+        catch (PDOException $e) {
+            echo json_encode(["message" => "Erreur lors de la modification des catégories", "PDO" => $e]);
+            exit;
+        }
+            
+        return true;
     }
 
     public function getById($id){
@@ -152,7 +206,7 @@ class Transaction {
             foreach($categories as &$category){
                 // On vérifie si la $category de la transaction est une sous-catégorie
                 if (!$category["parent_id"]){
-                    $result["list_category"]["categorie"] = $category["name_category"];
+                    $result["list_category"]["category"] = $category["name_category"];
                 }
                 else {
                     array_push($result["list_category"]["subcategories"], $category["name_category"]);
