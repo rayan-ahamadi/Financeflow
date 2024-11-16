@@ -46,16 +46,18 @@ class Transaction {
         }
         catch(PDOException $e){
             echo json_encode(["message" => "Erreur lors de l'ajout de la transaction", "PDO" => $e]);
+            exit;
         }
 
         // Récuperer l'id de la transaction ajouté
         try{ 
             $stmt2 = $this->pdo->prepare("SELECT id_transaction FROM transaction WHERE id_user = ? ORDER BY id_transaction DESC LIMIT 1 ");
             $stmt2->execute([$idUser]);
-            $lastTransactionId = $stmt2->fetchAll()[0];
+            $lastTransactionId = $stmt2->fetchAll(\PDO::FETCH_ASSOC)[0];
         }
         catch(PDOException $e){
             echo json_encode(["message" => "Erreur lors la récupération de la dernière transaction" , "PDO" => $e]);
+            exit;
         }
 
         // Ajout des catégories pour cette transaction
@@ -71,6 +73,7 @@ class Transaction {
         }
         catch(PDOException $e){
             echo json_encode(["message" => "Erreur lors l'ajout des catégories dans la transaction", "PDO" => $e]);
+            exit;
         }
         
         return true;
@@ -79,8 +82,88 @@ class Transaction {
     }
 
     public function getAll(){
-        $stmt = $this->pdo->prepare("SELECT * FROM transaction");
-        $stmt->execute();
-        return $stmt->fetchAll();
+        try{
+            // Prendre les transactions
+            $stmt = $this->pdo->prepare("SELECT * FROM transaction");
+            $stmt->execute();
+            $resultTransactions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Prendre leurs catégories
+            $stmtCategory = $this->pdo->prepare("SELECT id_transaction,name_category, parent_id FROM transactions_categories INNER JOIN category ON category.id_category = transactions_categories.id_category");
+            $stmtCategory->execute();
+            $categories = $stmtCategory->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach($resultTransactions as &$transaction){
+                $transaction["list_category"] = [
+                    "category" => "",
+                    "subcategories" => []
+                ];
+
+                /* Parcourir toutes les catégories des transactions pour trouver 
+                les catégories liés à la &$transaction */
+                foreach($categories as &$category){
+                    if ($category["id_transaction"] === $transaction["id_transaction"]){
+                        // On vérifie si la catégorie est une sous-catégorie
+                        if (!$category["parent_id"]){
+                            $transaction["list_category"]["category"] = $category["name_category"];
+                        }
+                        else {
+                            array_push($transaction["list_category"]["subcategories"], $category["name_category"]);
+                        }
+                    }
+                }
+
+            }
+
+            return $resultTransactions;
+        }
+        catch(PDOException $e){
+            echo json_encode(["message" => "Erreur lors de la récupération des transactions", "PDO" => $e]);
+            exit;
+        }
+        
+    }
+
+    public function delete($id){
+
+    }
+
+    public function update($id,$data){
+
+    }
+
+    public function getById($id){
+        try{
+            //Récuperer la transaction
+            $stmtTransaction = $this->pdo->prepare("SELECT * FROM transaction WHERE id_transaction = ?");
+            $stmtTransaction->execute([$id]);
+            $result = $stmtTransaction->fetchAll(\PDO::FETCH_ASSOC)[0];
+
+            // Récuperer ses catégories
+            $stmtCategory = $this->pdo->prepare("SELECT name_category, parent_id FROM transactions_categories INNER JOIN category ON category.id_category = transactions_categories.id_category WHERE id_transaction = ?");
+            $stmtCategory->execute([$id]);
+            $categories = $stmtCategory->fetchAll(\PDO::FETCH_ASSOC);
+
+            $result["list_category"] = [
+                "category" => "",
+                "subcategories" => []
+            ];
+
+            foreach($categories as &$category){
+                // On vérifie si la $category de la transaction est une sous-catégorie
+                if (!$category["parent_id"]){
+                    $result["list_category"]["categorie"] = $category["name_category"];
+                }
+                else {
+                    array_push($result["list_category"]["subcategories"], $category["name_category"]);
+                }
+            }
+
+            return $result;
+        }
+        catch(PDOException $e){
+            echo json_encode(["message" => "Erreur lors de la récupération de la transaction", "PDO" => $e]);
+            exit;
+        }
     }
 }

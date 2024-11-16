@@ -18,5 +18,24 @@ function route($uri, $method) {
         $transaction = new TransactionController();
         $transaction->getAllTransaction();
     }
+    else if (preg_match('#^/api/transactions/(\d+)$#', $uri, $matches)) { //Gère les Urls ayant un id après transactions
+        $id = $matches[1]; // Capture l'ID depuis l'URL
+        
+        if ($method === 'GET') {
+            $transaction = new TransactionController();
+            $transaction->getTransactionById($id);
+        } 
+        else if ($method === 'PUT') {
+            $json = file_get_contents("php://input");
+            $data = json_decode($json, true);
+
+            $transaction = new TransactionController();
+            $transaction->updateTransaction($id, $data);
+        } 
+        else if ($method === 'DELETE') {
+            $transaction = new TransactionController();
+            $transaction->deleteTransaction($id);
+        }
+    } 
     // Ajouter d'autres routes ici avec else if
 }
