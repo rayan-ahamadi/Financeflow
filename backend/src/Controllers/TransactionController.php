@@ -59,6 +59,23 @@ class TransactionController {
 
     }
 
+    public function getAllFromUserId($id_user){
+        if (!$id_user) {
+            http_response_code(400); // Mauvaise requête
+            echo json_encode(["message" => "Requête invalide"]);
+            exit;
+        }
+
+        $transactions = $this->transactionModel->getAllFromUser($id_user);
+        if ($transactions || $transactions === []) {
+            http_response_code(201);
+            echo $transactions === [] ? json_encode(["message" => "Cet utilisateur n'a pas de transactions"]) : json_encode($transactions);
+        } else {
+            http_response_code(500);
+            echo json_encode(["message" => "Erreur lors de la récupération des transactions de cet utilisateur"]);
+        }
+    }
+
     public function updateTransaction($id,$data){
         if (!$id || !$data) {
             http_response_code(400); // Mauvaise requête

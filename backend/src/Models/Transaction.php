@@ -124,6 +124,48 @@ class Transaction {
         
     }
 
+    public function getAllFromUser($id_user){
+        try{
+            // Prendre les transactions de l'utilisateur
+            $stmt = $this->pdo->prepare("SELECT * FROM transaction WHERE id_user = ?");
+            $stmt->execute([$id_user]);
+            $resultTransactions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Prendre leurs catégories
+            $stmtCategory = $this->pdo->prepare("SELECT id_transaction,name_category, parent_id FROM transactions_categories INNER JOIN category ON category.id_category = transactions_categories.id_category");
+            $stmtCategory->execute();
+            $categories = $stmtCategory->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach($resultTransactions as &$transaction){
+                $transaction["list_category"] = [
+                    "category" => "",
+                    "subcategories" => []
+                ];
+
+                /* Parcourir toutes les catégories des transactions pour trouver 
+                les catégories liés à la &$transaction */
+                foreach($categories as &$category){
+                    if ($category["id_transaction"] === $transaction["id_transaction"]){
+                        // On vérifie si la catégorie est une sous-catégorie
+                        if (!$category["parent_id"]){
+                            $transaction["list_category"]["category"] = $category["name_category"];
+                        }
+                        else {
+                            array_push($transaction["list_category"]["subcategories"], $category["name_category"]);
+                        }
+                    }
+                }
+
+            }
+
+            return $resultTransactions;
+        }
+        catch(PDOException $e){
+            echo json_encode(["message" => "Erreur lors de la récupération des transactions de l'utilisateur", "PDO" => $e]);
+            exit;
+        }
+    }
+
     public function delete($id){
         // supprimer les catégories de la transaction
         try{
