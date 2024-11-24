@@ -36,5 +36,25 @@ Les routes :
       "list_category": [1,9,8] /* 1 étant la catégorie et 9,8 sous-catégories */
   }
 
+  Pour le format qui sera retourné par l'API pour les requêtes GET, voici un exemple :
+  {
+    "id_transaction": 8,
+    "title": "Courses",
+    "type_transaction": "dépense",
+    "amount": "50.00",
+    "date": "2024-11-14",
+    "place": "Auchan",
+    "currency_code": "EUR",
+    "currency_symbol": "€",
+    "id_user": 1,
+    "list_category": {
+      "category": "Alimentation",
+      "subcategories": [
+        "Viande et poisson",
+        "Produits laitiers"
+      ]
+    }
+  } 
+
 
 
