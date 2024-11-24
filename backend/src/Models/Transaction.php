@@ -60,6 +60,30 @@ class Transaction {
             exit;
         }
 
+        // Modifier le solde de l'utilisateur
+        try{
+            $stmt3 = $this->pdo->prepare("SELECT balance FROM user WHERE id_user = ?");
+            $stmt3->execute([$idUser]);
+            $balance = $stmt3->fetchAll(\PDO::FETCH_ASSOC)[0]["balance"];
+
+            if ($typeTransaction === "revenu"){
+                $balance += $amount;
+            }
+            else {
+                $balance -= $amount;
+            }
+
+            $stmt4 = $this->pdo->prepare("UPDATE user SET balance = ? WHERE id_user = ?");
+            $stmt4->execute([
+                $balance,
+                $idUser
+            ]);
+        }
+        catch(PDOException $e){
+            echo json_encode(["message" => "Erreur lors de la modification du solde de l'utilisateur", "PDO" => $e]);
+            exit;
+        }
+
         // Ajout des catégories pour cette transaction
         try{
             // La liste de catégories est censé avoir une liste d'id venant de la table catégorie
