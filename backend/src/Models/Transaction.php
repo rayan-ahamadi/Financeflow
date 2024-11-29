@@ -32,17 +32,16 @@ class Transaction {
 
         //Ajouter la nouvelle transaction
         try{
-            $stmt = $this->pdo->prepare("INSERT INTO transaction (title,type_transaction,amount,date,place,currency_code,currency_symbol,id_user) VALUES (?,?,?,?,?,?,?,?)");
-            $stmt->execute([
-                $title,
-                $typeTransaction,
-                $amount,
-                $date,
-                $place,
-                $currency_code,
-                $currency_symbol,
-                $idUser
-            ]);
+            $stmt = $this->pdo->prepare("INSERT INTO transaction (title,type_transaction,amount,date,place,currency_code,currency_symbol,id_user) VALUES (:title,:type_transaction,:amount,:date,:place,:currency_code,:currency_symbol,:id_user)");
+            $stmt->bindParam(':title', $title, \PDO::PARAM_STR);
+            $stmt->bindParam(':type_transaction', $typeTransaction, \PDO::PARAM_STR);
+            $stmt->bindParam(':amount', $amount, \PDO::PARAM_STR);
+            $stmt->bindParam(':date', $date, \PDO::PARAM_STR);
+            $stmt->bindParam(':place', $place, \PDO::PARAM_STR);
+            $stmt->bindParam(':currency_code', $currency_code, \PDO::PARAM_STR);    
+            $stmt->bindParam(':currency_symbol', $currency_symbol, \PDO::PARAM_STR);
+            $stmt->bindParam(':id_user', $idUser, \PDO::PARAM_INT);
+            $stmt->execute();
         }
         catch(PDOException $e){
             echo json_encode(["message" => "Erreur lors de l'ajout de la transaction", "PDO" => $e]);
@@ -51,8 +50,9 @@ class Transaction {
 
         // Récuperer l'id de la transaction ajouté
         try{ 
-            $stmt2 = $this->pdo->prepare("SELECT id_transaction FROM transaction WHERE id_user = ? ORDER BY id_transaction DESC LIMIT 1 ");
-            $stmt2->execute([$idUser]);
+            $stmt2 = $this->pdo->prepare("SELECT id_transaction FROM transaction WHERE id_user = :id_user ORDER BY id_transaction DESC LIMIT 1 ");
+            $stmt2->bindParam(':id_user', $idUser, \PDO::PARAM_INT); ;
+            $stmt2->execute();
             $lastTransactionId = $stmt2->fetchAll(\PDO::FETCH_ASSOC)[0];
         }
         catch(PDOException $e){
@@ -62,8 +62,9 @@ class Transaction {
 
         // Modifier le solde de l'utilisateur
         try{
-            $stmt3 = $this->pdo->prepare("SELECT balance FROM user WHERE id_user = ?");
-            $stmt3->execute([$idUser]);
+            $stmt3 = $this->pdo->prepare("SELECT balance FROM user WHERE id_user = :id_user");
+            $stmt3->bindParam(':id_user', $idUser, \PDO::PARAM_INT);
+            $stmt3->execute();
             $balance = $stmt3->fetchAll(\PDO::FETCH_ASSOC)[0]["balance"];
 
             if ($typeTransaction === "revenu"){
@@ -73,14 +74,13 @@ class Transaction {
                 $balance -= $amount;
             }
 
-            $stmt4 = $this->pdo->prepare("UPDATE user SET balance = ? WHERE id_user = ?");
-            $stmt4->execute([
-                $balance,
-                $idUser
-            ]);
+            $stmt4 = $this->pdo->prepare("UPDATE user SET balance = :balance WHERE id_user = :id_user");
+            $stmt4->bindParam(':balance', $balance, \PDO::PARAM_STR);
+            $stmt4->bindParam(':id_user', $idUser, \PDO::PARAM_INT);
+            $stmt4->execute();
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors de la modification du solde de l'utilisateur", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors de la modification du solde de l'utilisateur", "PDO" => $e, "balance" => $stmt4->fetchAll(\PDO::FETCH_ASSOC)]);
             exit;
         }
 
@@ -88,11 +88,10 @@ class Transaction {
         try{
             // La liste de catégories est censé avoir une liste d'id venant de la table catégorie
             foreach($categoryList as &$category){
-                $stmtCategory = $this->pdo->prepare("INSERT INTO transactions_categories (id_transaction,id_category) VALUES (?,?)");
-                $stmtCategory->execute([
-                    $lastTransactionId['id_transaction'],
-                    $category
-                ]);
+                $stmtCategory = $this->pdo->prepare("INSERT INTO transactions_categories (id_transaction,id_category) VALUES (:id_transaction,:id_category)");
+                $stmtCategory->bindParam(':id_transaction', $lastTransactionId['id_transaction'], \PDO::PARAM_INT);
+                $stmtCategory->bindParam(':id_category', $category, \PDO::PARAM_INT);
+                $stmtCategory->execute();
             }
         }
         catch(PDOException $e){
@@ -151,8 +150,9 @@ class Transaction {
     public function getAllFromUser($id_user){
         try{
             // Prendre les transactions de l'utilisateur
-            $stmt = $this->pdo->prepare("SELECT * FROM transaction WHERE id_user = ?");
-            $stmt->execute([$id_user]);
+            $stmt = $this->pdo->prepare("SELECT * FROM transaction WHERE id_user = :id_user");
+            $stmt->bindParam(':id_user', $id_user, \PDO::PARAM_INT);
+            $stmt->execute();
             $resultTransactions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             // Prendre leurs catégories
@@ -193,8 +193,9 @@ class Transaction {
     public function delete($id){
         // supprimer les catégories de la transaction
         try{
-            $stmtDelCat = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction = ?");
-            $stmtDelCat->execute([$id]);
+            $stmtDelCat = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction = :id_transaction");
+            $stmtDelCat->bindParam(':id_transaction', $id, \PDO::PARAM_INT);
+            $stmtDelCat->execute();
         }
         catch(PDOException $e){
             echo json_encode(["message" => "Erreur lors de la suppression des catégories", "PDO" => $e]);
@@ -203,8 +204,9 @@ class Transaction {
 
         // supprimer la transaction de sa table
         try{
-            $stmtTransaction = $this->pdo->prepare("DELETE FROM transaction WHERE id_transaction = ?");
-            $stmtTransaction->execute([$id]);
+            $stmtTransaction = $this->pdo->prepare("DELETE FROM transaction WHERE id_transaction = :id_transaction");
+            $stmtTransaction->bindParam(':id_transaction', $id, \PDO::PARAM_INT);
+            $stmtTransaction->execute();
         }
         catch(PDOException $e){
             echo json_encode(["message" => "Erreur lors de la suppression de la transaction", "PDO" => $e]);
@@ -233,17 +235,16 @@ class Transaction {
 
         try {
             //Modification dans la table transaction
-            $stmtTransaction = $this->pdo->prepare("UPDATE transaction SET title = ?,type_transaction = ?,amount = ?,date = ? ,place = ? ,currency_code = ? ,currency_symbol = ? WHERE id_transaction = ?");
-            $stmtTransaction->execute([
-                $title,
-                $typeTransaction,
-                $amount,
-                $date,
-                $place,
-                $currency_code,
-                $currency_symbol,
-                $id
-            ]);
+            $stmtTransaction = $this->pdo->prepare("UPDATE transaction SET title = :title, type_transaction = :type_transaction, amount = :amount, date = :date,place = :place ,currency_code = :currency_code ,currency_symbol = :currency_symbol WHERE id_transaction = :id_transaction");
+            $stmtTransaction->bindParam(':title', $title, \PDO::PARAM_STR);
+            $stmtTransaction->bindParam(':type_transaction', $typeTransaction, \PDO::PARAM_STR);
+            $stmtTransaction->bindParam(':amount', $amount, \PDO::PARAM_STR);
+            $stmtTransaction->bindParam(':date', $date, \PDO::PARAM_STR);
+            $stmtTransaction->bindParam(':place', $place, \PDO::PARAM_STR);
+            $stmtTransaction->bindParam(':currency_code', $currency_code, \PDO::PARAM_STR);
+            $stmtTransaction->bindParam(':currency_symbol', $currency_symbol, \PDO::PARAM_STR);
+            $stmtTransaction->bindParam(':id_transaction', $id, \PDO::PARAM_INT);
+            $stmtTransaction->execute();
 
         }
         catch(PDOException $e) {
@@ -253,15 +254,15 @@ class Transaction {
 
         try{
             // Modification dans la table de jointure Transactions_Categories
-            $stmtDelCat = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction = ?");
-            $stmtDelCat->execute([$id]);
+            $stmtDelCat = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction = :id_transaction");
+            $stmtDelCat->bindParam(':id_transaction', $id, \PDO::PARAM_INT);
+            $stmtDelCat->execute();
 
             foreach($categoryList as &$category){
-                $stmtCategory = $this->pdo->prepare("INSERT INTO transactions_categories (id_transaction,id_category) VALUES (?,?)");
-                $stmtCategory->execute([
-                    $id,
-                    $category
-                ]);
+                $stmtCategory = $this->pdo->prepare("INSERT INTO transactions_categories (id_transaction,id_category) VALUES (:id_transaction,:id_category)");
+                $stmtCategory->bindParam(':id_transaction', $id, \PDO::PARAM_INT);
+                $stmtCategory->bindParam(':id_category', $category, \PDO::PARAM_INT);
+                $stmtCategory->execute();
             }
         }
         catch (PDOException $e) {
@@ -275,13 +276,15 @@ class Transaction {
     public function getById($id){
         try{
             //Récuperer la transaction
-            $stmtTransaction = $this->pdo->prepare("SELECT * FROM transaction WHERE id_transaction = ?");
-            $stmtTransaction->execute([$id]);
+            $stmtTransaction = $this->pdo->prepare("SELECT * FROM transaction WHERE id_transaction = :id_transaction");
+            $stmtTransaction->bindParam(':id_transaction', $id, \PDO::PARAM_INT);
+            $stmtTransaction->execute();
             $result = $stmtTransaction->fetchAll(\PDO::FETCH_ASSOC)[0];
 
             // Récuperer ses catégories
-            $stmtCategory = $this->pdo->prepare("SELECT name_category, parent_id FROM transactions_categories INNER JOIN category ON category.id_category = transactions_categories.id_category WHERE id_transaction = ?");
-            $stmtCategory->execute([$id]);
+            $stmtCategory = $this->pdo->prepare("SELECT name_category, parent_id FROM transactions_categories INNER JOIN category ON category.id_category = transactions_categories.id_category WHERE id_transaction = :id_transaction");
+            $stmtCategory->bindParam(':id_transaction', $id, \PDO::PARAM_INT);
+            $stmtCategory->execute();
             $categories = $stmtCategory->fetchAll(\PDO::FETCH_ASSOC);
 
             $result["list_category"] = [
