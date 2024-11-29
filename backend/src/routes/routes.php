@@ -62,6 +62,7 @@ function route($uri, $method) {
             $transaction->deleteTransaction($id);
         }
     } 
+    // Les routes pour la table utilisateurs
     else if ($uri === '/api/utilisateurs' && $method === 'GET') {
         $utilisateurs = new UtilisateursController();
         $utilisateurs->index();
