@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 class Utilisateurs {
     private $pdo;
 
@@ -9,13 +11,13 @@ class Utilisateurs {
 
     public function getAllUtilisateurs(){
         $query = $this->pdo->query("SELECT * FROM utilisateurs");
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function getUtilisateurById($id){
         $stmt = $this->pdo->prepare("SELECT * FROM utilisateurs WHERE id = ?");
         $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function createUtilisateur($username, $password, $name, $surname) {

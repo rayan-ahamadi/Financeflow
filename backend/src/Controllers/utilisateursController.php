@@ -1,8 +1,14 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Models\Utilisateurs;
+use App\Database\Database;
+
 class UtilisateursController {
     private $utilisateursModel;
-    public function __construct($pdo) {
+    public function __construct() {
+        $pdo = Database::connect();
         $this->utilisateursModel = new Utilisateurs($pdo);
     }
     public function index() {
