@@ -279,7 +279,13 @@ class Transaction {
             $stmtTransaction = $this->pdo->prepare("SELECT * FROM transaction WHERE id_transaction = :id_transaction");
             $stmtTransaction->bindParam(':id_transaction', $id, \PDO::PARAM_INT);
             $stmtTransaction->execute();
-            $result = $stmtTransaction->fetchAll(\PDO::FETCH_ASSOC)[0];
+            $result = $stmtTransaction->fetchAll(\PDO::FETCH_ASSOC)[0] ?? null;
+
+            if(!$result){
+                http_response_code(404); // Not found
+                echo json_encode(["message" => "Transaction non trouvée"]);
+                exit;
+            }
 
             // Récuperer ses catégories
             $stmtCategory = $this->pdo->prepare("SELECT name_category, parent_id FROM transactions_categories INNER JOIN category ON category.id_category = transactions_categories.id_category WHERE id_transaction = :id_transaction");
