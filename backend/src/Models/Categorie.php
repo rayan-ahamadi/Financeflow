@@ -11,7 +11,7 @@ class Categorie {
         $this->pdo = $pdo;
     }
 
-    public function getAll(){
+    public function getAll() : array {
         try {
             $sql = "SELECT * FROM categories";
             $stmt = $this->pdo->query($sql);
@@ -23,7 +23,7 @@ class Categorie {
         }
     }
 
-    public function getParents(){
+    public function getParents() : array {
         try {
             $sql = "SELECT * FROM categories WHERE parent_id IS NULL";
             $stmt = $this->pdo->query($sql);
@@ -35,7 +35,7 @@ class Categorie {
         }
     }
 
-    public function getChildren($id){
+    public function getChildren(int $id) : array {
         try {
             $sql = "SELECT * FROM categories WHERE parent_id = :id";
             $stmt = $this->pdo->prepare($sql);

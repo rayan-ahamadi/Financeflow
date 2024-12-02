@@ -5,14 +5,14 @@ namespace App\Models;
 use PDOException;
 
 class Transaction {
-    private $pdo;
+    private \PDO $pdo;
 
     public function __construct($pdo) {
         // intéragit avec la BD
         $this->pdo = $pdo;
     }
 
-    public function add($data){
+    public function add(array $data) : bool {
         $title = $data['title'] ?? null;
         $typeTransaction = $data['type_transaction'] ?? null;
         $amount = $data['amount'] ?? null;
@@ -104,7 +104,7 @@ class Transaction {
         
     }
 
-    public function getAll(){
+    public function getAll() : array{
         try{
             // Prendre les transactions
             $stmt = $this->pdo->prepare("SELECT * FROM transaction");
@@ -147,7 +147,7 @@ class Transaction {
         
     }
 
-    public function getAllFromUser($id_user){
+    public function getAllFromUser(int $id_user) : array{
         try{
             // Prendre les transactions de l'utilisateur
             $stmt = $this->pdo->prepare("SELECT * FROM transaction WHERE id_user = :id_user");
@@ -190,7 +190,7 @@ class Transaction {
         }
     }
 
-    public function delete($id){
+    public function delete(int $id) : bool {
         // supprimer les catégories de la transaction
         try{
             $stmtDelCat = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction = :id_transaction");
@@ -216,7 +216,7 @@ class Transaction {
         return true;
     }
 
-    public function update($id,$data){
+    public function update(int $id,array $data) : bool {
         $title = $data['title'] ?? null;
         $typeTransaction = $data['type_transaction'] ?? null;
         $amount = $data['amount'] ?? null;
@@ -273,7 +273,7 @@ class Transaction {
         return true;
     }
 
-    public function getById($id){
+    public function getById(int $id) : array{
         try{
             //Récuperer la transaction
             $stmtTransaction = $this->pdo->prepare("SELECT * FROM transaction WHERE id_transaction = :id_transaction");

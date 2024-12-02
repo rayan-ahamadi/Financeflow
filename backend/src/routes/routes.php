@@ -43,7 +43,7 @@ function route($uri, $method) {
     }    
     else if (preg_match('#^/api/transactions/(\d+)$#', $uri, $matches)) { 
         //Gère les Urls ayant un id après transactions
-        $id = $matches[1]; // Capture l'ID depuis l'URL
+        $id = (int) $matches[1]; // Capture l'ID depuis l'URL
         
         if ($method === 'GET') {
             // Récupération d'une transaction par son ID
@@ -91,7 +91,7 @@ function route($uri, $method) {
     }
     else if (preg_match("/^\/api\/categories\/parents-child\/(\d+)$/", $uri, $matches) && $method === 'GET') {
         // Récupère les sous-catégories d'une catégorie parente 
-        $id = $matches[1]; // Capture l'ID depuis l'URL
+        $id = (int) $matches[1]; // Capture l'ID depuis l'URL
         $categorie = new CategorieController();
         $categorie->getChildren($id);
     }   

@@ -12,7 +12,7 @@ class TransactionController {
         $this->transactionModel = new Transaction($pdo);
     }
 
-    public function getAllTransaction(){
+    public function getAllTransaction() : void {
         $transactions = $this->transactionModel->getAll();
         if ($transactions || $transactions === []) {
             http_response_code(201);
@@ -23,7 +23,7 @@ class TransactionController {
         }
     }
 
-    public function addTransaction($data){
+    public function addTransaction(array $data) : void {
         if ($data === null) {
             http_response_code(400); // Mauvaise requête
             echo json_encode(["message" => "Invalid JSON"]);
@@ -41,7 +41,7 @@ class TransactionController {
 
     }
 
-    public function deleteTransaction($id){
+    public function deleteTransaction(int $id)  : void {
         if (!$id) {
             http_response_code(400); // Mauvaise requête
             echo json_encode(["message" => "Requête invalide"]);
@@ -59,7 +59,7 @@ class TransactionController {
 
     }
 
-    public function getAllFromUserId($id_user){
+    public function getAllFromUserId(int $id_user)  : void {
         if (!$id_user) {
             http_response_code(400); // Mauvaise requête
             echo json_encode(["message" => "Requête invalide"]);
@@ -76,7 +76,7 @@ class TransactionController {
         }
     }
 
-    public function updateTransaction($id,$data){
+    public function updateTransaction(int $id, array $data)  : void {
         if (!$id || !$data) {
             http_response_code(400); // Mauvaise requête
             echo json_encode(["message" => "Requête invalide",]);
@@ -93,7 +93,7 @@ class TransactionController {
         }
     }
 
-    public function getTransactionById($id){
+    public function getTransactionById(int $id)  : void {
         if (!$id) {
             http_response_code(400); // Mauvaise requête
             echo json_encode(["message" => "Requête invalide"]);
