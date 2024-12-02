@@ -44,7 +44,7 @@ class Transaction {
             $stmt->execute();
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors de l'ajout de la transaction", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors de l'ajout de la transaction", "PDO" => $e->getMessage()]);
             exit;
         }
 
@@ -56,7 +56,7 @@ class Transaction {
             $lastTransactionId = $stmt2->fetchAll(\PDO::FETCH_ASSOC)[0];
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors la récupération de la dernière transaction" , "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors la récupération de la dernière transaction" , "PDO" => $e->getMessage()]);
             exit;
         }
 
@@ -80,7 +80,7 @@ class Transaction {
             $stmt4->execute();
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors de la modification du solde de l'utilisateur", "PDO" => $e, "balance" => $stmt4->fetchAll(\PDO::FETCH_ASSOC)]);
+            echo json_encode(["message" => "Erreur lors de la modification du solde de l'utilisateur", "PDO" => $e->getMessage(), "balance" => $stmt4->fetchAll(\PDO::FETCH_ASSOC)]);
             exit;
         }
 
@@ -95,7 +95,7 @@ class Transaction {
             }
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors l'ajout des catégories dans la transaction", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors l'ajout des catégories dans la transaction", "PDO" => $e->getMessage()]);
             exit;
         }
         
@@ -141,7 +141,7 @@ class Transaction {
             return $resultTransactions;
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors de la récupération des transactions", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors de la récupération des transactions", "PDO" => $e->getMessage()]);
             exit;
         }
         
@@ -185,7 +185,7 @@ class Transaction {
             return $resultTransactions;
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors de la récupération des transactions de l'utilisateur", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors de la récupération des transactions de l'utilisateur", "PDO" => $e->getMessage()]);
             exit;
         }
     }
@@ -198,7 +198,7 @@ class Transaction {
             $stmtDelCat->execute();
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors de la suppression des catégories", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors de la suppression des catégories", "PDO" => $e->getMessage()]);
             exit;
         }
 
@@ -209,7 +209,7 @@ class Transaction {
             $stmtTransaction->execute();
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors de la suppression de la transaction", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors de la suppression de la transaction", "PDO" => $e->getMessage()]);
             exit;
         }
 
@@ -248,7 +248,7 @@ class Transaction {
 
         }
         catch(PDOException $e) {
-            echo json_encode(["message" => "Erreur lors de la modification de la transaction", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors de la modification de la transaction", "PDO" => $e->getMessage()]);
             exit;
         }
 
@@ -266,7 +266,7 @@ class Transaction {
             }
         }
         catch (PDOException $e) {
-            echo json_encode(["message" => "Erreur lors de la modification des catégories", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors de la modification des catégories", "PDO" => $e->getMessage()]);
             exit;
         }
             
@@ -311,7 +311,7 @@ class Transaction {
             return $result;
         }
         catch(PDOException $e){
-            echo json_encode(["message" => "Erreur lors de la récupération de la transaction", "PDO" => $e]);
+            echo json_encode(["message" => "Erreur lors de la récupération de la transaction", "PDO" => $e->getMessage()]);
             exit;
         }
     }
