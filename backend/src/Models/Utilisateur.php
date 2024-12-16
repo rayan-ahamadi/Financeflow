@@ -23,15 +23,18 @@ class Utilisateurs {
     public function createUtilisateur($username, $password, $name, $surname) {
         $stmt = $this->pdo->prepare("INSERT INTO utilisateurs (username, password, name, surname) VALUES (?,?,?,?)");
         $stmt->execute([$username, $password, $name, $surname]);
+        return true;
     }
 
     public function updateUtilisateur($id, $username, $password, $name, $surname) {
         $stmt = $this->pdo->prepare("UPDATE utilisateurs SET username = ?, password = ?, name = ?, surname = ? WHERE id = ?");
         $stmt->execute([$username, $password, $name, $surname, $id]);
+        return true;
     }
 
     public function deleteUtilisateur($id) {
         $stmt = $this->pdo->prepare("DELETE FROM utilisateurs WHERE id = ?");
         $stmt->execute([$id]);
+        return true;
     }
 }
