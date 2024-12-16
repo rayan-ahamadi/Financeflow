@@ -94,4 +94,21 @@ class UtilisateursController {
             echo json_encode(["message" => "Erreur lors de la suppression de l'utilisateur"]);
         }
     }
+
+    public function login() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = json_decode(file_get_contents('php://input'), true);
+            if ($data === null) {
+                http_response_code(400);
+                echo json_encode(["message" => "Invalid JSON"]);
+                exit;
+            }
+
+            $username = $data['username'];
+            $password = $data['password'];
+
+            // Vérifie si l'utilisateur existe et retourne un token JWT
+            echo $this->utilisateursModel->login($username, $password); 
+        }
+    }
 }
