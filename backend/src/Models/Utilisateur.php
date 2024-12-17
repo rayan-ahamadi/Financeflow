@@ -1,38 +1,43 @@
 <?php
 
 namespace App\Models;
+
 use App\Helpers\JWTService;
 
 
-class Utilisateurs {
+
+class Utilisateur {
     private $pdo;
-    private $jwtService;
 
     public function __construct($pdo) {
         $this->pdo = $pdo;
-        $this->jwtService = new JWTService();
     }
 
     public function login($username,$password){
+        // vérifier si l'utilisateur existe
         $user = $this->authenticate($username,$password);
+
+        //retourner un token si l'utilisateur existe
         if ($user) {
             $payload = [
-                "id_user" => $user['id'],
+                "id_user" => $user['id_user'],
                 "iat" => time(),
                 "exp" => time() + 60 * 60
             ];
-            $token = $this->jwtService->generateToken($payload);
-            return $token;
+            $token = JWTService::generateToken($payload);
+            return json_encode(["token" => $token, "message" => "Connexion reussie", "user_id" => $user['id_user']]);
         }
     }
 
 
-    public function authenticate($username,$password){
-        $stmt = $this->pdo->prepare('SELECT * FROM user WHERE username = :username');
-        $stmt->bindParam(':username', $username, \PDO::PARAM_STR);
+    public function authenticate($email,$password){
+        //Vérifier l'existence de l'user avec le mail
+        $stmt = $this->pdo->prepare('SELECT * FROM user WHERE email = :email');
+        $stmt->bindParam(':email', $email, \PDO::PARAM_STR);
         $stmt->execute();
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
+        // Si l'utilisateur existe, vérifier le mot de passe
         if ($user && password_verify($password, $user['password'])) {
             // Si le mot de passe correspond, retourner les infos de l'utilisateur
             return $user;
@@ -41,31 +46,40 @@ class Utilisateurs {
     }
 
     public function getAllUtilisateurs(){
-        $query = $this->pdo->query("SELECT * FROM utilisateurs");
+        $query = $this->pdo->query("SELECT * FROM user ");
         return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function getUtilisateurById($id){
-        $stmt = $this->pdo->prepare("SELECT * FROM utilisateurs WHERE id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM user WHERE user_id= ?");
         $stmt->execute([$id]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function createUtilisateur($username, $password, $name, $surname) {
+    public function createUtilisateur($email, $password, $name, $surname, $role) {
         $password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->pdo->prepare("INSERT INTO utilisateurs (username, password, name, surname) VALUES (?,?,?,?)");
-        $stmt->execute([$username, $password, $name, $surname]);
+        $stmt = $this->pdo->prepare("INSERT INTO user (email, password, name, surname,role) VALUES (?,?,?,?,?)");
+        $stmt->execute([$email, $password, $name, $surname, $role]);
         return true;
     }
 
-    public function updateUtilisateur($id, $username, $password, $name, $surname) {
-        $stmt = $this->pdo->prepare("UPDATE utilisateurs SET username = ?, password = ?, name = ?, surname = ? WHERE id = ?");
-        $stmt->execute([$username, $password, $name, $surname, $id]);
+    public function updateUtilisateur($id, $email, $password, $name, $surname) {
+        $stmt = $this->pdo->prepare("UPDATE user SET email = ?, password = ?, name = ?, surname = ? WHERE id_user= ?");
+        $stmt->execute([$email, $password, $name, $surname, $id]);
         return true;
     }
 
     public function deleteUtilisateur($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM utilisateurs WHERE id = ?");
+        // Supprimer les transactions_categories associées à l'utilisateur
+        $stmt = $this->pdo->prepare("DELETE transactions_categories FROM transactions_categories USING transactions_categories JOIN transaction ON transactions_categories.id_transaction = transaction.id_transaction WHERE transaction.id_user = ?");
+        $stmt->execute([$id]);
+
+        // Supprimer les transactions associées à l'utilisateur
+        $stmt = $this->pdo->prepare("DELETE FROM transaction WHERE id_user = ?");
+        $stmt->execute([$id]);
+
+
+        $stmt = $this->pdo->prepare("DELETE FROM user WHERE id_user= ?");
         $stmt->execute([$id]);
         return true;
     }

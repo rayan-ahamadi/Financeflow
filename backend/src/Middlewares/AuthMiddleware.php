@@ -7,7 +7,9 @@ use App\Helpers\JWTService;
 class AuthMiddleware
 {
     public static function ensureAuthenticated()
-    {
+    {   
+
+        // Récupération des headers et vérification de l'existence du token
         $headers = getallheaders();
         if (isset($headers['Authorization'])) {
             $token = str_replace('Bearer ', '', $headers['Authorization']);

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\Utilisateurs;
+use App\Models\Utilisateur;
 use App\Database\Database;
 
 class UtilisateursController {
@@ -10,7 +10,7 @@ class UtilisateursController {
 
     public function __construct() {
         $pdo = Database::connect();
-        $this->utilisateursModel = new Utilisateurs($pdo);
+        $this->utilisateursModel = new Utilisateur($pdo);
     }
 
     public function index() {
@@ -18,7 +18,7 @@ class UtilisateursController {
         echo json_encode($utilisateurs);
     }
 
-    public function show($id) {
+    public function getUser($id) {
         $utilisateur = $this->utilisateursModel->getUtilisateurById($id);
         if ($utilisateur) {
             echo json_encode($utilisateur);
@@ -28,24 +28,26 @@ class UtilisateursController {
         }
     }
 
-    public function create() {
+    public function signup($data) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = json_decode(file_get_contents('php://input'), true);
             if ($data === null) {
                 http_response_code(400);
                 echo json_encode(["message" => "Invalid JSON"]);
                 exit;
             }
 
-            $username = $data['username'];
+            $email = $data['email'];
             $password = $data['password'];
             $name = $data['name'];
             $surname = $data['surname'];
-            $created = $this->utilisateursModel->createUtilisateur($username, $password, $name, $surname);
+            $role = $data['role'];
+            $created = $this->utilisateursModel->createUtilisateur($email, $password, $name, $surname, $role);
 
             if ($created) {
                 http_response_code(201);
-                echo json_encode(["message" => "Utilisateur créé avec succès"]);
+                $this->utilisateursModel->login($email, $password);
+                echo json_encode(["message" => "Utilisateur créé avec succès",
+                                "token" => $this->utilisateursModel->login($email, $password)]);
             } else {
                 http_response_code(500);
                 echo json_encode(["message" => "Erreur lors de la création de l'utilisateur"]);
@@ -62,11 +64,11 @@ class UtilisateursController {
                 exit;
             }
 
-            $username = $data['username'];
+            $email = $data['email'];
             $password = $data['password'];
             $name = $data['name'];
             $surname = $data['surname'];
-            $updated = $this->utilisateursModel->updateUtilisateur($id, $username, $password, $name, $surname);
+            $updated = $this->utilisateursModel->updateUtilisateur($id, $email, $password, $name, $surname);
 
             if ($updated) {
                 echo json_encode(["message" => "Utilisateur mis à jour avec succès"]);
@@ -95,20 +97,19 @@ class UtilisateursController {
         }
     }
 
-    public function login() {
+    public function login($data) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = json_decode(file_get_contents('php://input'), true);
             if ($data === null) {
                 http_response_code(400);
                 echo json_encode(["message" => "Invalid JSON"]);
                 exit;
             }
 
-            $username = $data['username'];
+            $email = $data['email'];
             $password = $data['password'];
 
             // Vérifie si l'utilisateur existe et retourne un token JWT
-            echo $this->utilisateursModel->login($username, $password); 
+            echo $this->utilisateursModel->login($email, $password); 
         }
     }
 }

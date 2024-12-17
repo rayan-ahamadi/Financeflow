@@ -51,13 +51,13 @@ function route($uri, $method) {
         $id = (int) $matches[1]; // Capture l'ID depuis l'URL
         
         if ($method === 'GET') {
-            AuthMiddleware::ensureAuthenticated();
+
             // Récupération d'une transaction par son ID
             $transaction = new TransactionController();
             $transaction->getTransactionById($id);
         } 
         else if ($method === 'PUT') {
-            AuthMiddleware::ensureAuthenticated();
+
             // Modification d'une transaction par son ID
             $json = file_get_contents("php://input");
             $data = json_decode($json, true);
@@ -66,7 +66,7 @@ function route($uri, $method) {
             $transaction->updateTransaction($id, $data);
         } 
         else if ($method === 'DELETE') {
-            AuthMiddleware::ensureAuthenticated();
+            
             // Suppression d'une transaction par son ID
             $transaction = new TransactionController();
             $transaction->deleteTransaction($id);
@@ -79,14 +79,13 @@ function route($uri, $method) {
         $utilisateurs = new UtilisateursController();
         $utilisateurs->index();
     }
-    else if ($uri === '/api/utilisateurs' && $method === 'POST') {
-        AuthMiddleware::ensureAuthenticated();
+    else if ($uri === '/api/utilisateurs/signup' && $method === 'POST') {
         // Création d'un utilisateur
         $json = file_get_contents("php://input");
         $data = json_decode($json, true);
 
         $utilisateurs = new UtilisateursController();
-        $utilisateurs->create($data);
+        $utilisateurs->signup($data);
     }
     else if ($uri === '/api/utilisateurs/login' && $method === 'POST') {
         // Authentification d'un utilisateur
@@ -95,6 +94,30 @@ function route($uri, $method) {
 
         $utilisateurs = new UtilisateursController();
         $utilisateurs->login($data);
+    }
+    else if (preg_match('#^/api/utilisateurs/(\d+)$#', $uri, $matches)) {
+        AuthMiddleware::ensureAuthenticated();
+        // Gère les URLs ayant un ID après utilisateurs
+        $id = (int) $matches[1]; // Capture l'ID depuis l'URL
+
+        if ($method === 'GET') {
+            // Récupération d'un utilisateur par son ID
+            $utilisateurs = new UtilisateursController();
+            $utilisateurs->getUser($id);
+        } 
+        else if ($method === 'PUT') {
+            // Modification d'un utilisateur par son ID
+            $json = file_get_contents("php://input");
+            $data = json_decode($json, true);
+
+            $utilisateurs = new UtilisateursController();
+            $utilisateurs->update($id, $data);
+        } 
+        else if ($method === 'DELETE') {
+            // Suppression d'un utilisateur par son ID
+            $utilisateurs = new UtilisateursController();
+            $utilisateurs->delete($id);
+        }
     }
     // Les routes pour la table catégories
     else if ($uri === '/api/categories' && $method === 'GET') {
