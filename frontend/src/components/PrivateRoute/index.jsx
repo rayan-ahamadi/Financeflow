@@ -1,11 +1,11 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-const PrivateRoute = ({ children }) => {
+function PrivateRoute ({ children }) {
   const isAuthenticated = localStorage.getItem("token"); // Vérifie la présence d'un token
 
   // Si l'utilisateur est authentifié, on affiche le composant children
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  return isAuthenticated ? children : <Navigate to="/welcome" />;
 };
 
 export default PrivateRoute;
