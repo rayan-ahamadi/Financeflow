@@ -1,13 +1,39 @@
 .welcome-container {
-  background-color: cadetblue;
-  background-repeat: no-repeat;
-  background-size: contain;
+  display: flex;
+  flex-direction: row;
   height: 100%;
   width: 100%;
 }
 
+.launcher-logo, .launcher-logo>img{
+  height: 70px;
+  margin: auto;
+  display: block;
+}
+
+.welcome-container > .welcome-background {
+  height: 100%;
+  width: 60%;
+  background-image: url("../assets/image/Background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.laucher-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  gap: 25px;
+}
+
+.laucher-buttons button > a {
+  text-decoration: none !important;
+  color: black !important;
+  font-weight: bold;
+}
+
 .welcome-container > .content-container {
-  float: right;
   background-color: #160430;
   color: white;
   height: 100%;
