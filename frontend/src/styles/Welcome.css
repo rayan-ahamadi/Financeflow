@@ -70,14 +70,15 @@
 }
 
 .form-group > input {
-  height: 46px;
+  height: 30px;
   border-radius: 8px;
   padding-left: 10px;
 }
 
-.form-group > input[type="submit"] {
+.form-group > button[type="submit"] {
   font-size: 20px;
   font-weight: bold;
+  text-align: center;
 }
 
 .separator{
@@ -88,11 +89,11 @@
 }
 
 button.connexion {
-  height: 46px;
+  height: 28px;
   border-radius: 8px;
 }
 
 button.register {
-  height: 46px;
+  height: 28px;
   border-radius: 8px;
 }

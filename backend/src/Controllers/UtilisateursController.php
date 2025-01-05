@@ -5,20 +5,24 @@ namespace App\Controllers;
 use App\Models\Utilisateur;
 use App\Database\Database;
 
-class UtilisateursController {
+class UtilisateursController
+{
     private $utilisateursModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $pdo = Database::connect();
         $this->utilisateursModel = new Utilisateur($pdo);
     }
 
-    public function index() {
+    public function index()
+    {
         $utilisateurs = $this->utilisateursModel->getAllUtilisateurs();
         echo json_encode($utilisateurs);
     }
 
-    public function getUser($id) {
+    public function getUser($id)
+    {
         $utilisateur = $this->utilisateursModel->getUtilisateurById($id);
         if ($utilisateur) {
             echo json_encode($utilisateur);
@@ -28,7 +32,8 @@ class UtilisateursController {
         }
     }
 
-    public function signup($data) {
+    public function signup($data)
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($data === null) {
                 http_response_code(400);
@@ -46,8 +51,10 @@ class UtilisateursController {
             if ($created) {
                 http_response_code(201);
                 $this->utilisateursModel->login($email, $password);
-                echo json_encode(["message" => "Utilisateur créé avec succès",
-                                "token" => $this->utilisateursModel->login($email, $password)]);
+                echo json_encode([
+                    "message" => "Utilisateur créé avec succès",
+                    "token" => $this->utilisateursModel->login($email, $password)
+                ]);
             } else {
                 http_response_code(500);
                 echo json_encode(["message" => "Erreur lors de la création de l'utilisateur"]);
@@ -55,7 +62,8 @@ class UtilisateursController {
         }
     }
 
-    public function update($id) {
+    public function update($id)
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data === null) {
@@ -87,7 +95,8 @@ class UtilisateursController {
         }
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         $deleted = $this->utilisateursModel->deleteUtilisateur($id);
         if ($deleted) {
             echo json_encode(["message" => "Utilisateur supprimé avec succès"]);
@@ -97,7 +106,8 @@ class UtilisateursController {
         }
     }
 
-    public function login($data) {
+    public function login($data)
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($data === null) {
                 http_response_code(400);
@@ -109,7 +119,7 @@ class UtilisateursController {
             $password = $data['password'];
 
             // Vérifie si l'utilisateur existe et retourne un token JWT
-            echo $this->utilisateursModel->login($email, $password); 
+            echo $this->utilisateursModel->login($email, $password) ?? json_encode(["error_message" => "Utilisateur non trouvé"]);
         }
     }
 }

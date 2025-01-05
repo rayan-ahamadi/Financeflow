@@ -1,16 +1,20 @@
-import {useState} from 'react';
+import {useState, useContext} from 'react';
 import { redirect } from 'react-router-dom';
 import {Loader} from '../Loader';
+import {AuthContext} from '../../context/AuthContext';
 
 function LoginForm() {
+  const {login} = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     fetch('http://localhost:8000/api/utilisateurs/login', {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -19,19 +23,22 @@ function LoginForm() {
       if (response.ok) {
         return response.json();
       }
-      throw new Error('Email ou mot de passe incorrect');
+      throw new Error('Erreur lors de la connexion');
     }).then((data) => {
-      localStorage.setItem('token', data.token);
+      if (data.error_message) {
+        throw new Error(data.error_message);
+      }
+      login(data.user_id, data.token);
       redirect('/');
     }).catch((error) => {
-      console.error(error);
+      setError(error.message);
     }).finally(() => {
       setLoading(false);
     });
   }
 
   return (
-    <form action="" method="POST">
+    <form action="#" method="POST">
       <div className="form-group">
         <label htmlFor="email">Votre adresse e-mail</label>
         <input type="email" name="email" id="email" placeholder='example@email.com' value={email} onChange={(e) => setEmail(e.target.value)}/>
@@ -44,6 +51,9 @@ function LoginForm() {
         <button type="submit" value="Connexion" onSubmit={handleSubmit}>
           {loading ? <Loader/> : 'Connexion'}
         </button>
+        <div className="msg">
+          {error && <p>{error}</p>}
+        </div>
       </div>
     </form>
   )

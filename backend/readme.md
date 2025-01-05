@@ -130,4 +130,11 @@ Sécurité :
   })
   ```
 
+  Ce qui est retourné si l'utilisateur n'existe pas : 
+  ```json
+  {
+    "message" : "Utilisateur non trouvé"
+  }
+  ```
+
 
