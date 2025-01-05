@@ -1,10 +1,11 @@
 import {useState, useContext} from 'react';
-import { redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {Loader} from '../Loader';
 import {AuthContext} from '../../context/AuthContext';
 
 function LoginForm() {
   const {login} = useContext(AuthContext);
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -28,8 +29,9 @@ function LoginForm() {
       if (data.error_message) {
         throw new Error(data.error_message);
       }
-      login(data.user_id, data.token);
-      redirect('/');
+      const token = data.token;
+      login(token);
+      navigate('/');
     }).catch((error) => {
       setError(error.message);
     }).finally(() => {

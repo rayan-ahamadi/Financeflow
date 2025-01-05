@@ -1,10 +1,11 @@
 import { Loader } from '../Loader'
 import { AuthContext } from '../../context/AuthContext'
 import { useContext, useState } from 'react'
-import { redirect } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 
 function SignupForm(){
+  const navigate = useNavigate();
   const {login} = useContext(AuthContext);
   const [Loading, setLoading] = useState(false);
   const [Error, setError] = useState('');
@@ -19,24 +20,24 @@ function SignupForm(){
     e.preventDefault();
     setLoading(true);
 
-    fetch('http://localhost:8000/api/utilisateurs/signup', {
-      mode: 'no-cors',
+    fetch('/api/utilisateurs/signup', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({name, surname, email, password, confirmPassword,role}),
     }).then((response) => {
       if (response.ok) {
         return response.json();
       }
-      throw new Error('Erreur lors de l\'inscription');
+      throw Error('Erreur lors de l\'inscription');
     }).then((data) => {
       if (data.error_message) {
-        throw new Error(data.error_message);
+        throw Error(data.error_message);
       }
-      login(data.user_id, data.token);
-      redirect('/');
+      const token = JSON.parse(data.token);
+      login(token.token);
+      navigate('/');
     }).catch((error) => {
       setError(error.message);
     }).finally(() => {
@@ -48,12 +49,12 @@ function SignupForm(){
   return (
     <form action='#' method="POST">
       <div className="form-group">
-        <label htmlFor="nom">Nom</label>
-        <input type="text" name="surname" id="nom" placeholder='Doe' value={name} onChange={(e) => setName(e.target.value)}/>
-      </div>
-      <div className="form-group">
         <label htmlFor="prénom">Prénom</label>
         <input type="text" name='name' id='prenom' placeholder='Joe' value={surname} onChange={(e) => setSurname(e.target.value)}/>
+      </div>
+      <div className="form-group">
+        <label htmlFor="nom">Nom</label>
+        <input type="text" name="surname" id="nom" placeholder='Doe' value={name} onChange={(e) => setName(e.target.value)}/>
       </div>
       <div className="form-group">
         <label htmlFor="email">E-mail</label>

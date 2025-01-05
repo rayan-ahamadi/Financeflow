@@ -1,26 +1,25 @@
 import { createContext, useState } from "react";
-import PropTypes from 'prop-types';
+import {jwtDecode} from 'jwt-decode';
+import {PropTypes} from 'prop-types';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
     
-    const login = (user,token) => {
-        setUser(user);
+    const login = (token) => {
+        const decodedToken = jwtDecode(token);
+        setUser(decodedToken.id_user);
         localStorage.setItem('token', token);
-        setLoading(false);
     }
     
     const logout = () => {
         setUser(null);
         localStorage.removeItem('token');
-        setLoading(false);
     }
     
     return (
-        <AuthContext.Provider value={{user, login, logout, loading}}>
+        <AuthContext.Provider value={{user, login, logout}}>
             {children}
         </AuthContext.Provider>
     )
