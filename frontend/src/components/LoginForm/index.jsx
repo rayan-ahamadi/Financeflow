@@ -8,7 +8,7 @@ function LoginForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [Error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
@@ -44,18 +44,18 @@ function LoginForm() {
     <form action="#" method="POST">
       <div className="form-group">
         <label htmlFor="email">Votre adresse e-mail</label>
-        <input type="email" name="email" id="email" placeholder='example@email.com' value={email} onChange={(e) => setEmail(e.target.value)}/>
+        <input type="email" name="email" id="email" placeholder='example@email.com' value={email} onChange={(e) => setEmail(e.target.value)} required/>
       </div>
       <div className="form-group">
         <label htmlFor="password">Votre mot de passe</label>
-        <input type="password" name="password" id="password" placeholder='●●●●●●●●' value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input type="password" name="password" id="password" placeholder='●●●●●●●●' value={password} onChange={(e) => setPassword(e.target.value)} required />
       </div>
       <div className="form-group">
         <button type="submit" value="Connexion" onClick={handleSubmit}>
           {loading ? <Loader/> : 'Connexion'}
         </button>
         <div className="msg">
-          {error && <p>{error}</p>}
+          { Error && <p style={{color: 'red'}}>{Error}</p> }
         </div>
       </div>
     </form>

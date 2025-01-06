@@ -18,6 +18,12 @@ function SignupForm(){
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError('Les mots de passe ne correspondent pas.');
+      return;
+    }
+
     setLoading(true);
 
     fetch('/api/utilisateurs/signup', {
@@ -47,34 +53,34 @@ function SignupForm(){
 
 
   return (
-    <form action='#' method="POST">
+    <form action='' method="POST" onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="prénom">Prénom</label>
-        <input type="text" name='name' id='prenom' placeholder='Joe' value={surname} onChange={(e) => setSurname(e.target.value)}/>
+        <input type="text" name='name' id='prenom' placeholder='Joe' value={surname} onChange={(e) => setSurname(e.target.value)} pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" required  />
       </div>
       <div className="form-group">
         <label htmlFor="nom">Nom</label>
-        <input type="text" name="surname" id="nom" placeholder='Doe' value={name} onChange={(e) => setName(e.target.value)}/>
+        <input type="text" name="surname" id="nom" placeholder='Doe' value={name} onChange={(e) => setName(e.target.value)} pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" required  />
       </div>
       <div className="form-group">
         <label htmlFor="email">E-mail</label>
-        <input type="email" name="email" id="email" placeholder='example@email.com' value={email} onChange={(e) => setEmail(e.target.value)}/>
+        <input type="email" name="email" id="email" placeholder='example@email.com' value={email} onChange={(e) => setEmail(e.target.value)} required />
       </div>
       <div className="form-group">
         <label htmlFor="password">Mot de passe</label>
-        <input type="password" name="password" id="password" placeholder='●●●●●●●●' value={password} onChange={(e) => setPassword(e.target.value)}/>
+        <input type="password" name="password" id="password" placeholder='●●●●●●●●' value={password} onChange={(e) => setPassword(e.target.value)} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}" title="Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial." required />
       </div>
       <div className="form-group">
         <label htmlFor="confirm-password">Confirmer le mot de passe</label>
-        <input type="password" name='confirm-password' id='confirm-password' placeholder='●●●●●●●●' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
+        <input type="password" name='confirm-password' id='confirm-password' placeholder='●●●●●●●●' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}" title="Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial."  required />
       </div>
       <div className="form-group">
-        <button type="submit" value="Inscription" onClick={handleSubmit}>
+        <button type="submit" value="Inscription">
           {Loading ? <Loader/> : 'Inscription'}
         </button>
       </div>
       <div className="msg">
-        {Error && <p>{Error}</p>}
+        { Error && <p style={{color: 'red'}}>{Error}</p> }
       </div>
     </form>
   )

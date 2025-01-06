@@ -88,6 +88,16 @@
   background-color: white;
 }
 
+.welcome-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.welcome-container form .form-group:has(button){
+  margin: auto;
+}
+
 button.connexion {
   height: 28px;
   border-radius: 8px;

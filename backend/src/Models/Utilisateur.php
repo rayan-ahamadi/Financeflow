@@ -81,6 +81,15 @@ class Utilisateur
     public function createUtilisateur($email, $password, $name, $surname, $role)
     {
         try {
+
+            // Vérifier si l'utilisateur existe déjà
+            $stmt = $this->pdo->prepare("SELECT * FROM user WHERE email = ?");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($user) {
+                return ["error_message" => "Cet utilisateur existe déjà."];
+            }
+
             $password = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $this->pdo->prepare("INSERT INTO user (email, password, name, surname, role) VALUES (?,?,?,?,?)");
             $stmt->execute([$email, $password, $name, $surname, $role]);

@@ -28,7 +28,7 @@ class UtilisateursController
             echo json_encode($utilisateur);
         } else {
             http_response_code(404);
-            echo json_encode(["message" => "Utilisateur non trouvé"]);
+            echo json_encode(["error_message" => "Utilisateur non trouvé"]);
         }
     }
 
@@ -37,7 +37,7 @@ class UtilisateursController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($data === null) {
                 http_response_code(400);
-                echo json_encode(["message" => "Invalid JSON"]);
+                echo json_encode(["error_message" => "Invalid JSON"]);
                 exit;
             }
 
@@ -48,6 +48,11 @@ class UtilisateursController
             $role = $data['role'];
             $created = $this->utilisateursModel->createUtilisateur($email, $password, $name, $surname, $role);
 
+            if (isset($created['error_message'])) {
+                echo json_encode($created);
+                exit;
+            }
+
             if ($created) {
                 http_response_code(201);
                 $this->utilisateursModel->login($email, $password);
@@ -57,7 +62,7 @@ class UtilisateursController
                 ]);
             } else {
                 http_response_code(500);
-                echo json_encode(["message" => "Erreur lors de la création de l'utilisateur"]);
+                echo json_encode(["error_message" => "Erreur lors de la création de l'utilisateur"]);
             }
         }
     }
@@ -68,7 +73,7 @@ class UtilisateursController
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data === null) {
                 http_response_code(400);
-                echo json_encode(["message" => "Invalid JSON"]);
+                echo json_encode(["error_message" => "Invalid JSON"]);
                 exit;
             }
 
@@ -82,7 +87,7 @@ class UtilisateursController
                 echo json_encode(["message" => "Utilisateur mis à jour avec succès"]);
             } else {
                 http_response_code(500);
-                echo json_encode(["message" => "Erreur lors de la mise à jour de l'utilisateur"]);
+                echo json_encode(["error_message" => "Erreur lors de la mise à jour de l'utilisateur"]);
             }
         } else {
             $utilisateur = $this->utilisateursModel->getUtilisateurById($id);
@@ -90,7 +95,7 @@ class UtilisateursController
                 echo json_encode($utilisateur);
             } else {
                 http_response_code(404);
-                echo json_encode(["message" => "Utilisateur non trouvé"]);
+                echo json_encode(["error_message" => "Utilisateur non trouvé"]);
             }
         }
     }
@@ -102,7 +107,7 @@ class UtilisateursController
             echo json_encode(["message" => "Utilisateur supprimé avec succès"]);
         } else {
             http_response_code(500);
-            echo json_encode(["message" => "Erreur lors de la suppression de l'utilisateur"]);
+            echo json_encode(["error_message" => "Erreur lors de la suppression de l'utilisateur"]);
         }
     }
 
@@ -111,7 +116,7 @@ class UtilisateursController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($data === null) {
                 http_response_code(400);
-                echo json_encode(["message" => "Invalid JSON"]);
+                echo json_encode(["error_message" => "Invalid JSON"]);
                 exit;
             }
 
