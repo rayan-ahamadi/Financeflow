@@ -15,6 +15,7 @@ class Utilisateur
         $this->pdo = $pdo;
     }
 
+    // Renvoie un token pour l'utilisateur existant
     public function login($username, $password)
     {
         // vérifier si l'utilisateur existe
@@ -33,64 +34,90 @@ class Utilisateur
         return false;
     }
 
-
+    // Vérifie si l'utilisateur existe et si le mot de passe est correct
     public function authenticate($email, $password)
     {
-        //Vérifier l'existence de l'user avec le mail
-        $stmt = $this->pdo->prepare('SELECT * FROM user WHERE email = :email');
-        $stmt->bindParam(':email', $email, \PDO::PARAM_STR);
-        $stmt->execute();
-        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM user WHERE email = :email');
+            $stmt->bindParam(':email', $email, \PDO::PARAM_STR);
+            $stmt->execute();
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        // Si l'utilisateur existe, vérifier le mot de passe
-        if ($user && password_verify($password, $user['password'])) {
-            // Si le mot de passe correspond, retourner les infos de l'utilisateur
-            return $user;
+            // Si l'utilisateur existe, vérifier le mot de passe
+            if ($user && password_verify($password, $user['password'])) {
+                // Si le mot de passe correspond, retourner les infos de l'utilisateur
+                return $user;
+            } else {
+                return false;
+            }
+        } catch (\PDOException $e) {
+            return ["error_message" => $e->getMessage()];
         }
+
         return false;
     }
 
     public function getAllUtilisateurs()
     {
-        $query = $this->pdo->query("SELECT * FROM user ");
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $query = $this->pdo->query("SELECT * FROM user");
+            return $query->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            return ["error_message" => $e->getMessage()];
+        }
     }
 
     public function getUtilisateurById($id)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM user WHERE user_id= ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM user WHERE user_id= ?");
+            $stmt->execute([$id]);
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            return ["error_message" => $e->getMessage()];
+        }
     }
 
     public function createUtilisateur($email, $password, $name, $surname, $role)
     {
-        $password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->pdo->prepare("INSERT INTO user (email, password, name, surname,role) VALUES (?,?,?,?,?)");
-        $stmt->execute([$email, $password, $name, $surname, $role]);
-        return true;
+        try {
+            $password = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $this->pdo->prepare("INSERT INTO user (email, password, name, surname, role) VALUES (?,?,?,?,?)");
+            $stmt->execute([$email, $password, $name, $surname, $role]);
+            return true;
+        } catch (\PDOException $e) {
+            return ["error_message" => $e->getMessage()];
+        }
     }
 
     public function updateUtilisateur($id, $email, $password, $name, $surname)
     {
-        $stmt = $this->pdo->prepare("UPDATE user SET email = ?, password = ?, name = ?, surname = ? WHERE id_user= ?");
-        $stmt->execute([$email, $password, $name, $surname, $id]);
-        return true;
+        try {
+            $stmt = $this->pdo->prepare("UPDATE user SET email = ?, password = ?, name = ?, surname = ? WHERE id_user= ?");
+            $stmt->execute([$email, $password, $name, $surname, $id]);
+            return true;
+        } catch (\PDOException $e) {
+            return ["error_message" => $e->getMessage()];
+        }
     }
 
     public function deleteUtilisateur($id)
     {
-        // Supprimer les transactions_categories associées à l'utilisateur
-        $stmt = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction IN (SELECT id_transaction FROM transaction WHERE id_user = ?)");
-        $stmt->execute([$id]);
+        try {
+            // Supprimer les transactions_categories associées à l'utilisateur
+            $stmt = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction IN (SELECT id_transaction FROM transaction WHERE id_user = ?)");
+            $stmt->execute([$id]);
 
-        // Supprimer les transactions associées à l'utilisateur
-        $stmt = $this->pdo->prepare("DELETE FROM transaction WHERE id_user = ?");
-        $stmt->execute([$id]);
+            // Supprimer les transactions associées à l'utilisateur
+            $stmt = $this->pdo->prepare("DELETE FROM transaction WHERE id_user = ?");
+            $stmt->execute([$id]);
 
-
-        $stmt = $this->pdo->prepare("DELETE FROM user WHERE id_user= ?");
-        $stmt->execute([$id]);
-        return true;
+            // Supprimer l'utilisateur
+            $stmt = $this->pdo->prepare("DELETE FROM user WHERE id_user= ?");
+            $stmt->execute([$id]);
+            return true;
+        } catch (\PDOException $e) {
+            return ["error_message" => $e->getMessage()];
+        }
     }
 }

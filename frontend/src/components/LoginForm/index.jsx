@@ -14,7 +14,7 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    fetch('http://localhost:8000/api/utilisateurs/login', {
+    fetch('/api/utilisateurs/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,6 +26,7 @@ function LoginForm() {
       }
       throw new Error('Erreur lors de la connexion');
     }).then((data) => {
+      console.log(data);
       if (data.error_message) {
         throw new Error(data.error_message);
       }
@@ -50,7 +51,7 @@ function LoginForm() {
         <input type="password" name="password" id="password" placeholder='●●●●●●●●' value={password} onChange={(e) => setPassword(e.target.value)} />
       </div>
       <div className="form-group">
-        <button type="submit" value="Connexion" onSubmit={handleSubmit}>
+        <button type="submit" value="Connexion" onClick={handleSubmit}>
           {loading ? <Loader/> : 'Connexion'}
         </button>
         <div className="msg">

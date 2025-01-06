@@ -118,8 +118,14 @@ class UtilisateursController
             $email = $data['email'];
             $password = $data['password'];
 
+            $userToken = $this->utilisateursModel->login($email, $password);
+
+            if (isset($userToken['error_message'])) {
+                http_response_code(401);
+            }
+
             // Vérifie si l'utilisateur existe et retourne un token JWT
-            echo $this->utilisateursModel->login($email, $password) ?? json_encode(["error_message" => "Utilisateur non trouvé"]);
+            echo $userToken ? $userToken : json_encode(["error_message" => "E-mail ou mot de passe incorrect."]);
         }
     }
 }
