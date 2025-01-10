@@ -1,19 +1,43 @@
-import './Home.css'
-import {AuthContext} from '../../context/AuthContext';
-import {useContext, useEffect} from 'react';
-import {jwtDecode} from 'jwt-decode';
-
+import { AuthContext } from '../../context/AuthContext';
+import { UserContext } from '../../context/UserContext';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Loader } from '../../components/Loader';
 
 function Home() {
-  const token = localStorage.getItem('token');
-  const tokenDecoded = jwtDecode(token);
-  const user = tokenDecoded.id_user;
-  
-  return (
-    <>
-      <h1>Bienvenue. {user} {token}</h1>
+  const navigate = useNavigate();
+  const { logout, isTokenExpired } = useContext(AuthContext);
+  const { userData } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    
+    if (!token || isTokenExpired(token) || !userData) {
+      alert('Votre session a expiré. Veuillez vous reconnecter.');
+      logout(); 
+      navigate('/login');
+      setLoading(false);
+      return;
+    }
+
+    if (userData){
+      setLoading(false);
+    }
+
+  }, [isTokenExpired, logout, navigate, userData]);
+
+  if (loading) {
+    return <>
+     <Loader />
     </>
-  )
+  }
+
+  return (
+    <div>
+      <h1>Salut, {userData?.name}!</h1>
+    </div>
+  );
 }
 
-export default Home
+export default Home;

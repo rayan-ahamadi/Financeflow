@@ -70,7 +70,7 @@ class Utilisateur
     public function getUtilisateurById($id)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM user WHERE user_id= ?");
+            $stmt = $this->pdo->prepare("SELECT * FROM user WHERE id_user= ?");
             $stmt->execute([$id]);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {

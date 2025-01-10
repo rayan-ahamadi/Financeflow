@@ -36,10 +36,11 @@ function SignupForm(){
       if (response.ok) {
         return response.json();
       }
-      throw Error('Erreur lors de l\'inscription');
+      setError('Erreur lors de l\'inscription');
     }).then((data) => {
       if (data.error_message) {
-        throw Error(data.error_message);
+        setError(data.error_message);
+        return;
       }
       const token = JSON.parse(data.token);
       login(token.token);

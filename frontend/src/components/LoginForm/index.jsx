@@ -24,11 +24,13 @@ function LoginForm() {
       if (response.ok) {
         return response.json();
       }
-      throw new Error('Erreur lors de la connexion');
+      setError('Erreur lors de la connexion');
+      return null;
     }).then((data) => {
       console.log(data);
       if (data.error_message) {
-        throw new Error(data.error_message);
+        setError(data.error_message);
+        return;
       }
       const token = data.token;
       login(token);
