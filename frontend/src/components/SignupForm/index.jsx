@@ -43,6 +43,7 @@ function SignupForm(){
         return;
       }
       const token = JSON.parse(data.token);
+      console.log(token.token);
       login(token.token);
       navigate('/');
     }).catch((error) => {
@@ -57,11 +58,11 @@ function SignupForm(){
     <form action='' method="POST" onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="prénom">Prénom</label>
-        <input type="text" name='name' id='prenom' placeholder='Joe' value={surname} onChange={(e) => setSurname(e.target.value)} pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" required  />
+        <input type="text" name='name' id='prenom' placeholder='Joe' value={surname} onChange={(e) => setName(e.target.value)} pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" required  />
       </div>
       <div className="form-group">
         <label htmlFor="nom">Nom</label>
-        <input type="text" name="surname" id="nom" placeholder='Doe' value={name} onChange={(e) => setName(e.target.value)} pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" required  />
+        <input type="text" name="surname" id="nom" placeholder='Doe' value={name} onChange={(e) => setSurname(e.target.value)} pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" required  />
       </div>
       <div className="form-group">
         <label htmlFor="email">E-mail</label>
