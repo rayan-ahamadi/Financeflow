@@ -2,6 +2,7 @@ import { UserContext } from '../../context/UserContext';
 import { useContext, useEffect, useState } from 'react';
 import { Loader } from '../../components/Loader';
 import { Header } from '../../components/Header';
+import { Balance } from '../../components/Balance';
 import '../../styles/Home.css';
 
 function Home() {
@@ -27,6 +28,7 @@ function Home() {
       <Header />
       <div className="home-container">
         <h1>Salut, {userData?.name}!</h1>
+        <Balance />
       </div>
     </div>
   );

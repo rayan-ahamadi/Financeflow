@@ -1,0 +1,31 @@
+.balance-container {
+  margin: auto;
+  width: 30%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 10px;
+}
+
+.total-balance {
+  grid-column: 1 / span 2;
+}
+
+.balance-container > div{
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 16px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.balance-container p {
+    font-size: 16px;
+    margin: 6px 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+p.amount-text{
+  font-size: 60px;
+  font-weight: bolder;
+}
