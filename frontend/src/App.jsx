@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import React from 'react'
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import { useContext, useEffect } from 'react'
 import './styles/App.css'
 
 import Error from './pages/Error/index.jsx'
@@ -22,11 +22,10 @@ function App(){
     if (token && user && isTokenEx) {
       alert('Votre session a expiré. Veuillez vous reconnecter.');
       logout(); 
-      navigate('/login');
       return;
     }
 
-  }, [isTokenExpired, logout, navigate,token]);
+  }, [isTokenEx, logout,token,user]);
 
 
 

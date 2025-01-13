@@ -27,7 +27,6 @@ function LoginForm() {
       setError('Erreur lors de la connexion');
       return null;
     }).then((data) => {
-      console.log(data);
       if (data.error_message) {
         setError(data.error_message);
         return;

@@ -2,6 +2,7 @@ import { createContext, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import {PropTypes} from 'prop-types';
 
+
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {

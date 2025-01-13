@@ -43,7 +43,6 @@ function SignupForm(){
         return;
       }
       const token = JSON.parse(data.token);
-      console.log(token.token);
       login(token.token);
       navigate('/');
     }).catch((error) => {

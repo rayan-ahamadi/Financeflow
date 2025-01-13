@@ -1,20 +1,33 @@
-import React from 'react';
-import './Header.css';
+import '../../styles/Header.css';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faArrowRightArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
+
 
 const Header = () => {
   return (
     <header className="header">
       <div className="header-container">
         <nav className="header-nav">
-          <ul className="header-menu">
-            <li className="header-menu-item"><a href="/">Home</a></li>
-            <li className="header-menu-item"><a href="/about">About</a></li>
-            <li className="header-menu-item"><a href="/contact">Contact</a></li>
-          </ul>
+          <Link to="/">
+            <span className="header-menu-item" aria-label="Accueil">
+              <FontAwesomeIcon icon={faHouse} />
+            </span>
+          </Link>
+          <Link to="/transactions">
+            <span className="header-menu-item" aria-label="Transactions">
+              <FontAwesomeIcon icon={faArrowRightArrowLeft} />
+            </span>
+          </Link>
+          <Link to="/settings">
+            <span className="header-menu-item" aria-label="Paramètres">
+              <FontAwesomeIcon icon={faGear} />
+            </span>
+          </Link>
         </nav>
       </div>
     </header>
   );
 };
 
-export default Header;
+export {Header};

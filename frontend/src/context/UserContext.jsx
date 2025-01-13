@@ -1,7 +1,7 @@
 import {createContext, useState,useContext,useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { AuthContext } from './AuthContext';
-import { useNavigate } from 'react-router-dom';
+
 
 const UserContext = createContext();
 

@@ -1,0 +1,33 @@
+header {
+    padding: 26px 0;
+}
+
+.header-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+nav.header-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    gap: 20px;
+}
+
+nav.header-nav a {
+    text-decoration: none;
+    color: black;
+}
+
+nav.header-nav a > span::after {
+    content: attr(aria-label);
+    margin-left: 5px;
+} 
+
+nav.header-nav a:hover {
+    color: #007bff;
+}
