@@ -34,14 +34,17 @@ const TransactionProvider = ({ children }) => {
             })
             .finally(() => {
                 setTransactionLoading(false);
-                if (transactions.length === 0) {
-                    setTimeout(() => {
-                        alert("Vous n'avez pas encore de transactions, il est temps d'en ajouter ! ;)");
-                    }, 1000);
-                }
             });
         }
     }, [user]);
+
+    useEffect(() => {
+        if (transactions.length === 0) {
+            setTimeout(() => {
+                alert("Vous n'avez pas encore de transactions, il est temps d'en ajouter ! ;)");
+            }, 1000);
+        }
+    }, [transactions])
     
     return (
         <TransactionContext.Provider value={{ transactions, setTransactions, transactionLoading }}>
