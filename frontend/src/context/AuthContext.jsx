@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import {PropTypes} from 'prop-types';
 
@@ -35,6 +35,13 @@ const AuthProvider = ({ children }) => {
         setUser(null);
         localStorage.removeItem('token');
     };
+
+    useEffect(() => {
+        if (!user){
+            const decodedToken = jwtDecode(localStorage.getItem('token'));
+            setUser(decodedToken.id_user);
+        }
+    }, [user]);
 
     return (
         <AuthContext.Provider value={{ user, login, logout, isTokenExpired }}>
