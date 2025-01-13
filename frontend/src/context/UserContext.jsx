@@ -9,6 +9,7 @@ const UserProvider = ({children}) => {
     // Récuperer identifiant de l'utilisateur connecté
     const {user} = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
+    const [userloading, setUserLoading] = useState(true);
     
     useEffect(() => {
         if (!user || userData) {
@@ -30,6 +31,7 @@ const UserProvider = ({children}) => {
         })
         .then((data) => {
             setUserData(data);
+            setUserLoading(false);
         })
         .catch((err) => {
             alert(err.message);
@@ -37,7 +39,7 @@ const UserProvider = ({children}) => {
     }, [user,userData]);
 
     return (
-        <UserContext.Provider value={{userData, setUserData}}>
+        <UserContext.Provider value={{userData, setUserData,userloading}}>
             {children}
         </UserContext.Provider>
     );

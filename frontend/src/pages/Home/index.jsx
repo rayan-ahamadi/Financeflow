@@ -1,27 +1,20 @@
 import { UserContext } from '../../context/UserContext';
-import { useContext, useEffect, useState } from 'react';
+import { useContext} from 'react';
 import { Loader } from '../../components/Loader';
 import { Header } from '../../components/Header';
 import { Balance } from '../../components/Balance';
 import '../../styles/Home.css';
 
 function Home() {
-  const { userData } = useContext(UserContext);
-  const [loading, setLoading] = useState(true);
+  const { userData, userloading } = useContext(UserContext);
 
-  useEffect(() => {
-    
-    if (userData){
-      setLoading(false);
-    }
-
-  }, [userData]);
-
-  if (loading) {
-    return <>
-     <Loader />
-    </>
+  if (userloading) {
+    return <div style={{height : "100vh", display : "flex", flexDirection : "column", justifyContent : "center" , alignItems : "center", fontSize: "60px"}} >
+      <p>Chargement de vos données...</p>
+      <Loader />
+      </div>;
   }
+
 
   return (
     <div className="app-container">
