@@ -11,7 +11,6 @@ function Transaction({transaction}) {
             <div className="transaction-date">{transaction.date}</div>
             <div className="transaction-place">{transaction.place}</div>
             <div className="transaction-category">{transaction.list_category.category}</div>
-            <div className="transaction-description">{transaction.description}</div>
         </div>
     );
 }

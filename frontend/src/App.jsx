@@ -7,6 +7,7 @@ import Home from './pages/Home/index.jsx'
 import Login from './pages/Login/index.jsx'
 import Register from './pages/Register/index.jsx'
 import Launcher from './pages/Launcher/index.jsx'
+import Transactions from './pages/Transactions/index.jsx'
 import PrivateRoute from './components/PrivateRoute/index.jsx'
 import { AuthContext } from './context/AuthContext.jsx'
 
@@ -39,6 +40,7 @@ function App(){
           <Route path="/register" element={<Register />} />
           {/*Routes privées*/}
           <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route path='/transactions' element={<PrivateRoute><Transactions /></PrivateRoute>} />
           {/*Routes non existantes*/}
           <Route path="*" element={<Error />} />
         </Routes>

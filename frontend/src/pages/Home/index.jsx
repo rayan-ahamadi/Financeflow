@@ -1,5 +1,5 @@
 import { UserContext } from '../../context/UserContext';
-import { useContext} from 'react';
+import { useContext } from 'react';
 import { Loader } from '../../components/Loader';
 import { Header } from '../../components/Header';
 import { Balance } from '../../components/Balance';
