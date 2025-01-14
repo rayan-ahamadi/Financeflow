@@ -32,7 +32,8 @@ function LoginForm() {
         return;
       }
       const token = data.token;
-      login(token);
+      localStorage.setItem('token', token);
+      login();
       navigate('/');
     }).catch((error) => {
       setError(error.message);

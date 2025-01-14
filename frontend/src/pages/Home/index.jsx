@@ -3,6 +3,7 @@ import { useContext} from 'react';
 import { Loader } from '../../components/Loader';
 import { Header } from '../../components/Header';
 import { Balance } from '../../components/Balance';
+import { TransactionContainer } from '../../components/TransactionContainer';
 import '../../styles/Home.css';
 
 function Home() {
@@ -22,6 +23,7 @@ function Home() {
       <div className="home-container">
         <h1>Salut, {userData?.name}!</h1>
         <Balance />
+        <TransactionContainer limit={5} />
       </div>
     </div>
   );

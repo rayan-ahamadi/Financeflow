@@ -21,15 +21,12 @@ const TransactionProvider = ({ children }) => {
             })
             .then((response) => response.json())
             .then((data) => {
-                console.log("Transactions:", data);
-
                 if(data.message === "Cet utilisateur n'a pas de transactions"){
                     data = [];
 
                     setTimeout(() => {
                         alert("Vous n'avez pas encore de transactions, il est temps d'en ajouter ! ;)");
                     }, 1000)
-        
                 }
 
                 setTransactions(data);
@@ -38,9 +35,8 @@ const TransactionProvider = ({ children }) => {
             .catch((error) => {
                 console.error("Error:", error);
             })
-            .finally((data) => {
+            .finally(() => {
                 setTransactionLoading(false);
-
             });
         }
     }, [user]);

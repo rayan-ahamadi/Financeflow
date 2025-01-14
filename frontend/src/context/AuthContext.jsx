@@ -9,7 +9,9 @@ const AuthProvider = ({ children }) => {
     // Stocke l'identifiant de l'utilisateur connecté
     const [user, setUser] = useState(null);
 
-     const isTokenExpired = (token) => {
+     const isTokenExpired = () => {
+         const token = localStorage.getItem('token');
+         if (!token) return "Token non trouvé";
          try {
              const decodedToken = jwtDecode(token);
              const now = Date.now() / 1000;  // Timestamp actuel en secondes
@@ -20,9 +22,10 @@ const AuthProvider = ({ children }) => {
          }
      };
 
-    const login = (token) => {
+    const login = () => {
+        const token = localStorage.getItem('token');
         if (isTokenExpired(token)) {
-            console.error('Token expiré, impossible de se connecter.');
+            console.error('Token expiré, veuillez vous reconnecter.');
             logout();
             return;
         }

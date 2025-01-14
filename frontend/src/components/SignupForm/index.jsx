@@ -43,7 +43,8 @@ function SignupForm(){
         return;
       }
       const token = JSON.parse(data.token);
-      login(token.token);
+      localStorage.setItem('token', token.token);
+      login();
       navigate('/');
     }).catch((error) => {
       setError(error.message);

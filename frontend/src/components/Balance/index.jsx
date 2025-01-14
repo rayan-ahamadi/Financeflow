@@ -1,9 +1,8 @@
 import { UserContext } from "../../context/UserContext";
 import { TransactionContext } from "../../context/TransactionContext";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Loader } from "../Loader";
 import "../../styles/Balance.css";
-import { use } from "react";
 
 function Balance() {
     const { userData } = useContext(UserContext);
@@ -21,11 +20,11 @@ function Balance() {
             </div>
             <div className="total-income">
                 <p>Revenus</p> 
-                {transactionLoading == true ? <Loader /> : <p className="amount-text">{totalIncome}€</p>}
+                {transactionLoading ? <Loader /> : <p className="amount-text">{totalIncome}€</p>}
             </div>
             <div className="total-expense">
                 <p>Dépenses</p>
-                {transactionLoading == true ? <Loader/> : <p className="amount-text">{totalExpense}€</p>}
+                {transactionLoading ? <Loader/> : <p className="amount-text">{totalExpense}€</p>}
             </div>
         </div>
     );

@@ -1,0 +1,16 @@
+.transaction-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.transaction-head h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.transaction-head .action {
+    display: flex;
+    gap: 1rem;
+}

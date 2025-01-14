@@ -11,21 +11,21 @@ import PrivateRoute from './components/PrivateRoute/index.jsx'
 import { AuthContext } from './context/AuthContext.jsx'
 
 
+
 function App(){
   // Contexte d'authentification de l'utilisateur
-  const { logout, isTokenExpired, user } = useContext(AuthContext);
-  const token = localStorage.getItem('token');
-  const isTokenEx = isTokenExpired(token) 
+  const { logout,isTokenExpired } = useContext(AuthContext);
 
   // Vérifier le token si il y en a un
   useEffect(() => {
-    if (token && user && isTokenEx) {
+    const isTokenEx = isTokenExpired();
+    if (isTokenEx && isTokenEx !== "Token non trouvé") {
       alert('Votre session a expiré. Veuillez vous reconnecter.');
       logout(); 
       return;
     }
 
-  }, [isTokenEx, logout,token,user]);
+  }, [isTokenExpired, logout]);
 
 
 
