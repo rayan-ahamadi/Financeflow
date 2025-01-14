@@ -9,16 +9,16 @@ const AuthProvider = ({ children }) => {
     // Stocke l'identifiant de l'utilisateur connecté
     const [user, setUser] = useState(null);
 
-    const isTokenExpired = (token) => {
-        try {
-            const decodedToken = jwtDecode(token);
-            const now = Date.now() / 1000; // Timestamp actuel en secondes
-            return decodedToken.exp < now;
-        } catch (error) {
-            console.error('Error decoding token:', error);
-            return true; // Considérer le token comme expiré s'il est invalide
-        }
-    };
+     const isTokenExpired = (token) => {
+         try {
+             const decodedToken = jwtDecode(token);
+             const now = Date.now() / 1000;  // Timestamp actuel en secondes
+             return decodedToken.exp < now;
+         } catch (error) {
+             console.error('Error decoding token:', error);
+             return true;  // Considérer le token comme expiré s'il est invalide
+         }
+     };
 
     const login = (token) => {
         if (isTokenExpired(token)) {
@@ -37,7 +37,8 @@ const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        if (!user){
+        const token = localStorage.getItem("token")
+        if (token && !user){
             const decodedToken = jwtDecode(localStorage.getItem('token'));
             setUser(decodedToken.id_user);
         }

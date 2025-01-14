@@ -25,26 +25,26 @@ const TransactionProvider = ({ children }) => {
 
                 if(data.message === "Cet utilisateur n'a pas de transactions"){
                     data = [];
+
+                    setTimeout(() => {
+                        alert("Vous n'avez pas encore de transactions, il est temps d'en ajouter ! ;)");
+                    }, 1000)
+        
                 }
 
                 setTransactions(data);
+                return data;
             })
             .catch((error) => {
                 console.error("Error:", error);
             })
-            .finally(() => {
+            .finally((data) => {
                 setTransactionLoading(false);
+
             });
         }
     }, [user]);
 
-    useEffect(() => {
-        if (transactions.length === 0) {
-            setTimeout(() => {
-                alert("Vous n'avez pas encore de transactions, il est temps d'en ajouter ! ;)");
-            }, 1000);
-        }
-    }, [transactions])
     
     return (
         <TransactionContext.Provider value={{ transactions, setTransactions, transactionLoading }}>
