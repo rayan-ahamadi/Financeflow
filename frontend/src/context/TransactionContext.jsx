@@ -12,7 +12,7 @@ const TransactionProvider = ({ children }) => {
     useEffect(() => {
         const token = localStorage.getItem("token");
 
-        if (token) {
+        if (token && user) {
             fetch(`/api/transactions/user/${user}`, {
                 method: "GET",
                 headers: {
