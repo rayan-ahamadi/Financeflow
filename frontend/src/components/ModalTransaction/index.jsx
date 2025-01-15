@@ -20,10 +20,11 @@ function ModalTransaction({showModal, setShowModal}) {
         currency_symbol : "€",
         list_category: [],
     });
-    const [categories, setCategories] = useState(localStorage.getItem('categories') ? JSON.parse(localStorage.getItem('categories')) : []);
+    const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
     const [selectSubCategories, setSelectSubCategories] = useState(false);
     const selectCatégorie = useRef(null);
+    const selectType = useRef(null);
 
     const handleChange = (e) => {
         setTransaction({
@@ -75,16 +76,20 @@ function ModalTransaction({showModal, setShowModal}) {
         });       
     };
 
+    // Pour le select des catégories parent
     const handleCategory = (e) => {
         setCategory(categories.find(cat => cat.id_category === parseInt(e.target.value)));
         const selectedCategoryId = parseInt(e.target.value);
         setTransaction({...transaction, list_category: [selectedCategoryId]});
+
+        if(selectedCategoryId !== 6){
+            selectType.current.setValue({ value: 'dépense', label: 'Dépense' });
+        }
         
     };
 
     // Affiche les sous-catégories si une catégorie parent est sélectionnée
     useEffect(() => {
-        console.log(user);
         if(transaction.list_category.length > 0){
             setSelectSubCategories(
                 <div className="form-group">
@@ -111,7 +116,8 @@ function ModalTransaction({showModal, setShowModal}) {
             );
         }
     }, [transaction, categories]);
-
+    
+    // Récupère les catégories depuis l'API ou le cache
     useEffect(() => {
         const fetchCategories = async () => {
             const response = await fetch('/api/categories', {
@@ -128,7 +134,9 @@ function ModalTransaction({showModal, setShowModal}) {
         if (!cachedCategories || cachedCategories === '[]') {
             fetchCategories();
             setCategories(JSON.parse(cachedCategories));
-        } 
+        } else {
+            setCategories(JSON.parse(cachedCategories));
+        }
     }, []);
 
     return (
@@ -137,7 +145,7 @@ function ModalTransaction({showModal, setShowModal}) {
                 <h3>Ajouter une transaction</h3>
                 <span className='close-modal' onClick={() => setShowModal(false)}><FontAwesomeIcon icon={faCircleXmark} /></span>
             </div>
-            <div className="modal-body">
+            <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
                 <form>
                     <div className="form-group">
                         <label htmlFor="title">Titre</label>
@@ -145,14 +153,20 @@ function ModalTransaction({showModal, setShowModal}) {
                     </div>
                     <div className="form-group">
                         <label htmlFor="type">Type</label>
-                        <select name="type_transaction" id="type" onChange={handleChange} required value={transaction.type_transaction}>
-                            <option value="">Sélectionner un type de transaction</option>
-                            <option value="revenu">Revenu</option>
-                            <option value="dépense">Dépense</option>
-                        </select>
+                        <Select
+                            name="type_transaction"
+                            value={transaction.type_transaction ? { value: transaction.type_transaction, label: transaction.type_transaction.charAt(0).toUpperCase() + transaction.type_transaction.slice(1) } : null}
+                            options={[
+                                { value: 'revenu', label: 'Revenu' },
+                                { value: 'dépense', label: 'Dépense' }
+                            ]}
+                            onChange={(selectedOption) => handleChange({ target: { name: 'type_transaction', value: selectedOption.value } })}
+                            ref={selectType}
+                            required
+                        />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="amount">Montant</label>
+                        <label htmlFor="amount">Montant (€)</label>
                         <input type="number" name="amount" id="amount" value={transaction.amount}  onChange={handleChange} required/>
                     </div>
                     <div className="form-group">
@@ -170,7 +184,7 @@ function ModalTransaction({showModal, setShowModal}) {
                             value={category ? { value: category.id_category, label: category.name_category } : null}
                             ref={selectCatégorie}
                             options={categories
-                                .filter(category => category.parent_id === null)
+                                ?.filter(category => category.parent_id === null)
                                 .map(category => ({
                                     value: category.id_category,
                                     label: category.name_category

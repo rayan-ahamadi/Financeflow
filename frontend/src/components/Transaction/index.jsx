@@ -7,6 +7,7 @@ function Transaction({transaction}) {
 
     return (
         <div className="transaction">
+            <div className="transaction-title">{transaction.title}</div>
             <div className="transaction-amount">{transactionTypeSign}{transaction.amount}{transaction.currency_symbol}</div>
             <div className="transaction-date">{transaction.date}</div>
             <div className="transaction-place">{transaction.place}</div>
@@ -16,8 +17,8 @@ function Transaction({transaction}) {
 }
 Transaction.propTypes = {
     transaction: PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        description: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        amount: PropTypes.string.isRequired,
         type_transaction: PropTypes.string.isRequired,
         currency_symbol: PropTypes.string.isRequired,
         date: PropTypes.string.isRequired,
