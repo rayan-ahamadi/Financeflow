@@ -8,7 +8,7 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import "../../styles/TransactionContainer.css";
 
 
-function TransactionContainer({limit = null, page = "home", setShowModal}) {
+function TransactionContainer({limit = null, page = "home", setShowModal, setTransaction}) {
     const { transactions } = useContext(TransactionContext);
 
     let newTransactions = [];
@@ -18,10 +18,24 @@ function TransactionContainer({limit = null, page = "home", setShowModal}) {
         newTransactions = transactions;
     }
 
+    const handleAddTransaction = () => {
+        setTransaction({
+            title: "",
+            amount: 0,
+            type_transaction: "",
+            date: "",
+            place: "",
+            currency_code : "EUR",
+            currency_symbol : "€",
+            list_category: [],
+        });
+        setShowModal(true);
+    }
+
     const emptyMessage = newTransactions.length === 0 ? <p className="empty-transaction">Aucune transaction pour le moment</p> : null;
     // Montre le bouton "Tout afficher" si on est sur la page d'accueil
     const showAction = page === "home" ? true : false;
-    const addTransaction = <div className="addTransaction" onClick={() => setShowModal(true)}><FontAwesomeIcon icon={faCirclePlus}  /></div> 
+    const addTransaction = <div className="addTransaction" onClick={handleAddTransaction}><FontAwesomeIcon icon={faCirclePlus}  /></div> 
 
     return (
         <div className="transaction-container">
@@ -36,7 +50,7 @@ function TransactionContainer({limit = null, page = "home", setShowModal}) {
                <ul>
                     {emptyMessage || newTransactions.map((transaction) => (
                         <li key={transaction.id}>
-                            <Transaction key={transaction.id} transaction={transaction} />
+                            <Transaction key={transaction.id} transaction={transaction} setTransaction={setTransaction} setShowModal={setShowModal} />
                         </li>
                     ))}
                 </ul> 

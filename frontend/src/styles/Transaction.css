@@ -4,3 +4,24 @@
     justify-content: space-around;
     gap: 1rem;
 }
+
+.transaction-action {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 1rem;
+}
+
+.transaction-action span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.transaction-action span.transaction-delete:hover {
+    color: #ff0000;
+}
+
+.transaction-action span.transaction-edit:hover {
+    color: #00ff00;
+}

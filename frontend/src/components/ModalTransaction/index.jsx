@@ -7,23 +7,14 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/Modal.css';
 import Select from 'react-select';
 
-function ModalTransaction({showModal, setShowModal}) {
+function ModalTransaction({showModal, setShowModal, transaction, setTransaction}) {
     const { user } = useContext(AuthContext);
     const { fetchTransactions } = useContext(TransactionContext);
-    const [transaction, setTransaction] = useState({
-        title: "",
-        amount: 0,
-        type_transaction: "revenu",
-        date: "",
-        place: "",
-        currency_code : "EUR",
-        currency_symbol : "€",
-        list_category: [],
-    });
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
     const [selectSubCategories, setSelectSubCategories] = useState(false);
     const selectCatégorie = useRef(null);
+    const selectSubCatégorie = useRef(null);
     const selectType = useRef(null);
 
     const handleChange = (e) => {
@@ -42,9 +33,11 @@ function ModalTransaction({showModal, setShowModal}) {
         e.preventDefault();
 
         const transactionData = {...transaction, id_user: user};
+        const apiRoute = transactionData.id_transaction ? `/api/transactions/${transactionData.id_transaction}` : '/api/transactions';
+        const apiMethod = transactionData.id_transaction ? 'PUT' : 'POST';
         
-        fetch('/api/transactions', {
-            method: 'POST',
+        fetch(apiRoute, {
+            method: apiMethod,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -53,9 +46,12 @@ function ModalTransaction({showModal, setShowModal}) {
         })
         .then(response => response.json())
         .then(data => {
-            if(data.message === "Transaction ajoutée avec succès"){
+            if(data.message === "La transaction a été ajouté avec succès"){
                 alert("Transaction ajoutée avec succès");
                 fetchTransactions(); // Mettre à jour les transactions après l'ajout
+            } else if(data.message === "La transaction a été modifié avec succès"){
+                alert("Transaction modifiée avec succès");
+                fetchTransactions(); // Mettre à jour les transactions après la modification
             }
         })
         .catch(error => console.error('Error:', error))
@@ -97,6 +93,7 @@ function ModalTransaction({showModal, setShowModal}) {
                     <Select
                         isMulti
                         name="list_category"
+                        ref={selectSubCatégorie}
                         options={categories
                             .filter(category => category.parent_id === parseInt(transaction.list_category[0]))
                             .map(category => ({
@@ -116,6 +113,18 @@ function ModalTransaction({showModal, setShowModal}) {
             );
         }
     }, [transaction, categories]);
+
+    // Si des catégories sont déjà défini dans la transaction, on clique et affiche les sous-catégories
+    useEffect(() => {
+        console.log(transaction.list_category);
+        if(transaction.list_category.category){
+            const id_category = categories.find(cat => cat.name_category === transaction.list_category.category).id_category;
+            const selectedSubCategoriesName = transaction.list_category.subcategories;
+            const subCategoriesId = categories.filter(cat => selectedSubCategoriesName.includes(cat.name_category)).map(cat => cat.id_category);
+            selectCatégorie.current.setValue({ value: id_category , label: transaction.list_category.category});
+            selectSubCatégorie.current.setValue(subCategoriesId.map(id => ({ value: id, label: categories.find(cat => cat.id_category === id).name_category })));
+        }
+    }, [transaction.list_category, categories]);
     
     // Récupère les catégories depuis l'API ou le cache
     useEffect(() => {
