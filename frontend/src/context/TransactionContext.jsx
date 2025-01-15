@@ -1,4 +1,4 @@
-import { createContext, useState,useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import { AuthContext } from "./AuthContext";
 
@@ -8,8 +8,8 @@ const TransactionProvider = ({ children }) => {
     const { user } = useContext(AuthContext);
     const [transactions, setTransactions] = useState([]);
     const [transactionLoading, setTransactionLoading] = useState(true);
-    
-    useEffect(() => {
+
+    const fetchTransactions = () => {
         const token = localStorage.getItem("token");
 
         if (token && user) {
@@ -39,11 +39,14 @@ const TransactionProvider = ({ children }) => {
                 setTransactionLoading(false);
             });
         }
+    };
+
+    useEffect(() => {
+        fetchTransactions();
     }, [user]);
 
-    
     return (
-        <TransactionContext.Provider value={{ transactions, setTransactions, transactionLoading }}>
+        <TransactionContext.Provider value={{ transactions, setTransactions, transactionLoading, fetchTransactions }}>
             {children}
         </TransactionContext.Provider>
     );

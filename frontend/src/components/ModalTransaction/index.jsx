@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
+import { TransactionContext } from '../../context/TransactionContext';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
@@ -8,6 +9,7 @@ import Select from 'react-select';
 
 function ModalTransaction({showModal, setShowModal}) {
     const { user } = useContext(AuthContext);
+    const { fetchTransactions } = useContext(TransactionContext);
     const [transaction, setTransaction] = useState({
         title: "",
         amount: 0,
@@ -52,10 +54,12 @@ function ModalTransaction({showModal, setShowModal}) {
         .then(data => {
             if(data.message === "Transaction ajoutée avec succès"){
                 alert("Transaction ajoutée avec succès");
+                fetchTransactions(); // Mettre à jour les transactions après l'ajout
             }
         })
         .catch(error => console.error('Error:', error))
         .finally(() => {
+            setSelectSubCategories(false);
             setTransaction({
                 title: "",
                 amount: 0,
@@ -67,6 +71,7 @@ function ModalTransaction({showModal, setShowModal}) {
                 list_category: [],
             });
             setShowModal(false);
+            
         });       
     };
 
@@ -136,11 +141,11 @@ function ModalTransaction({showModal, setShowModal}) {
                 <form>
                     <div className="form-group">
                         <label htmlFor="title">Titre</label>
-                        <input type="text" name="title" id="title" placeholder='Titre de votre transaction' onChange={handleChange} required />
+                        <input type="text" name="title" id="title" placeholder='Titre de votre transaction' value={transaction.title} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="type">Type</label>
-                        <select name="type_transaction" id="type" onChange={handleChange} required>
+                        <select name="type_transaction" id="type" onChange={handleChange} required value={transaction.type_transaction}>
                             <option value="">Sélectionner un type de transaction</option>
                             <option value="revenu">Revenu</option>
                             <option value="dépense">Dépense</option>
@@ -148,15 +153,15 @@ function ModalTransaction({showModal, setShowModal}) {
                     </div>
                     <div className="form-group">
                         <label htmlFor="amount">Montant</label>
-                        <input type="number" name="amount" id="amount" value={transaction.amount} onChange={handleChange} required/>
+                        <input type="number" name="amount" id="amount" value={transaction.amount}  onChange={handleChange} required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="date">Date</label>
-                        <input type="date" name="date" id="date" onChange={handleChange} required/>
+                        <input type="date" name="date" id="date" value={transaction.date} onChange={handleChange} required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="place">Lieu</label>
-                        <input type="text" name="place" id="place" onChange={handleChange} required/>
+                        <input type="text" name="place" id="place" value={transaction.place} onChange={handleChange} required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="category">Catégorie</label>

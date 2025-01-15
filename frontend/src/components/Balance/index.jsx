@@ -8,8 +8,14 @@ function Balance() {
     const { userData } = useContext(UserContext);
     const { transactions,transactionLoading } = useContext(TransactionContext);
 
-    const totalIncome = transactions.filter((transaction) => transaction.type === "revenu").reduce((acc, transaction) => acc + transaction.amount, 0).toFixed(2);
-    const totalExpense = transactions.filter((transaction) => transaction.type === "dépense").reduce((acc, transaction) => acc + transaction.amount, 0).toFixed(2);
+    const totalIncome = transactions
+        .filter((transaction) => transaction.type_transaction === "revenu")
+        .reduce((acc, transaction) => acc + parseFloat(transaction.amount), 0)
+        .toFixed(2);
+    const totalExpense = transactions
+        .filter((transaction) => transaction.type_transaction === "dépense")
+        .reduce((acc, transaction) => acc + parseFloat(transaction.amount), 0)
+        .toFixed(2);
 
 
     return (
