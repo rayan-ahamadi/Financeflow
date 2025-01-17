@@ -8,9 +8,9 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import "../../styles/TransactionContainer.css";
 
 
-function TransactionContainer({limit = null, page = "home", setShowModal, setTransaction}) {
+function TransactionContainer({limit = null, page = "home", setShowModal}) {
     const { transactions } = useContext(TransactionContext);
-
+    const { setTransactionForm } = useContext(TransactionContext);
     let newTransactions = [];
     if (limit) {
         newTransactions = transactions.slice(0, limit);
@@ -19,7 +19,7 @@ function TransactionContainer({limit = null, page = "home", setShowModal, setTra
     }
 
     const handleAddTransaction = () => {
-        setTransaction({
+        setTransactionForm({
             title: "",
             amount: 0,
             type_transaction: "",

@@ -8,6 +8,16 @@ const TransactionProvider = ({ children }) => {
     const { user } = useContext(AuthContext);
     const [transactions, setTransactions] = useState([]);
     const [transactionLoading, setTransactionLoading] = useState(true);
+    const [transactionForm , setTransactionForm] = useState({
+        title: "",
+        amount: 0,
+        type_transaction: "revenu",
+        date: "",
+        place: "",
+        currency_code : "EUR",
+        currency_symbol : "€",
+        list_category: [],
+    });
 
     const fetchTransactions = () => {
         const token = localStorage.getItem("token");
@@ -46,7 +56,7 @@ const TransactionProvider = ({ children }) => {
     }, [user]);
 
     return (
-        <TransactionContext.Provider value={{ transactions, setTransactions, transactionLoading, fetchTransactions }}>
+        <TransactionContext.Provider value={{ transactions, setTransactions, transactionLoading, fetchTransactions, transactionForm, setTransactionForm }}>
             {children}
         </TransactionContext.Provider>
     );

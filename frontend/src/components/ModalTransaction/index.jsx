@@ -7,8 +7,9 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/Modal.css';
 import Select from 'react-select';
 
-function ModalTransaction({showModal, setShowModal, transaction, setTransaction}) {
+function ModalTransaction({showModal, setShowModal}) {
     const { user } = useContext(AuthContext);
+    const { transactionForm , setTransactionForm: setTransaction } = useContext(TransactionContext);
     const { fetchTransactions } = useContext(TransactionContext);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
@@ -74,11 +75,10 @@ function ModalTransaction({showModal, setShowModal, transaction, setTransaction}
 
     // Pour le select des catégories parent
     const handleCategory = (e) => {
-        setCategory(categories.find(cat => cat.id_category === parseInt(e.target.value)));
-        const selectedCategoryId = parseInt(e.target.value);
-        setTransaction({...transaction, list_category: [selectedCategoryId]});
+        setCategory({ id_category: e.target.value, name_category: categories.find(cat => cat.id_category === parseInt(e.target.value)).name_category });
+        setTransaction({...transaction, list_category: [category.id_category]});
 
-        if(selectedCategoryId !== 6){
+        if(category.id_category !== 6){
             selectType.current.setValue({ value: 'dépense', label: 'Dépense' });
         }
         
@@ -86,6 +86,7 @@ function ModalTransaction({showModal, setShowModal, transaction, setTransaction}
 
     // Affiche les sous-catégories si une catégorie parent est sélectionnée
     useEffect(() => {
+        console.log(transaction)
         if(transaction.list_category.length > 0){
             setSelectSubCategories(
                 <div className="form-group">
@@ -116,15 +117,8 @@ function ModalTransaction({showModal, setShowModal, transaction, setTransaction}
 
     // Si des catégories sont déjà défini dans la transaction, on clique et affiche les sous-catégories
     useEffect(() => {
-        console.log(transaction.list_category);
-        if(transaction.list_category.category){
-            const id_category = categories.find(cat => cat.name_category === transaction.list_category.category).id_category;
-            const selectedSubCategoriesName = transaction.list_category.subcategories;
-            const subCategoriesId = categories.filter(cat => selectedSubCategoriesName.includes(cat.name_category)).map(cat => cat.id_category);
-            selectCatégorie.current.setValue({ value: id_category , label: transaction.list_category.category});
-            selectSubCatégorie.current.setValue(subCategoriesId.map(id => ({ value: id, label: categories.find(cat => cat.id_category === id).name_category })));
-        }
-    }, [transaction.list_category, categories]);
+        setCategory({ id_category: transaction.list_category[0], name_category: categories.find(cat => cat.id_category === parseInt(transaction.list_category[0])).name_category });
+        }, [transaction.list_category, categories]);
     
     // Récupère les catégories depuis l'API ou le cache
     useEffect(() => {

@@ -13,27 +13,15 @@ function Transactions() {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
-    // Champs de la modal par défaut
-    const [transaction, setTransaction] = useState({
-        title: "",
-        amount: 0,
-        type_transaction: "revenu",
-        date: "",
-        place: "",
-        currency_code : "EUR",
-        currency_symbol : "€",
-        list_category: [],
-    });
-
     return (
         <div className="app-container">
             <Header />
             <div className="transactions-container">
                 <h1>Transactions</h1>
                 <Balance />
-                <TransactionContainer page="transactions" setShowModal={setShowModal} setTransaction={setTransaction}  />
+                <TransactionContainer page="transactions" setShowModal={setShowModal}  />
             </div>
-            <ModalTransaction showModal={showModal} setShowModal={setShowModal} transaction={transaction} setTransaction={setTransaction} />
+            <ModalTransaction showModal={showModal} setShowModal={setShowModal} />
         </div>
     );
 }

@@ -1,14 +1,15 @@
 import "../../styles/Transaction.css";
 import PropTypes from 'prop-types';
+import  { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
-function Transaction({transaction, setTransaction, setShowModal}) {
-
+function Transaction({transaction, setShowModal}) {
+    const { setTransactionForm } = useContext(TransactionContext);
     const transactionTypeSign = transaction.type_transaction === "revenu" ? "+" : "-";
 
     const handleEditClick = () => {
-        setTransaction({ ...transaction, id_transaction: transaction.id_transaction });
+        setTransactionForm({ ...transaction, id_transaction: transaction.id_transaction });
         setShowModal(true);
     }
 
