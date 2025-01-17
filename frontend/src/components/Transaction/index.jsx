@@ -6,12 +6,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 function Transaction({transaction, setShowModal}) {
-    const { setTransactionForm } = useContext(TransactionContext);
+    const { setTransactionForm, fetchTransactions } = useContext(TransactionContext);
     const transactionTypeSign = transaction.type_transaction === "revenu" ? "+" : "-";
 
     const handleEditClick = () => {
         setTransactionForm({ ...transaction, id_transaction: transaction.id_transaction });
         setShowModal(true);
+    }
+
+    const handleDelete = () => {
+        if (!window.confirm("Voulez-vous vraiment supprimer cette transaction ?")) {
+            return;
+        }
+
+        fetch(`/api/transactions/${transaction.id_transaction}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.message === "La transaction a été supprimé avec succès") {
+                fetchTransactions();
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+
     }
 
     return (
@@ -23,7 +47,7 @@ function Transaction({transaction, setShowModal}) {
             <div className="transaction-category">{transaction.list_category.category}</div>
             <div className="transaction-action">
                 <span className="transaction-edit" onClick={handleEditClick} ><FontAwesomeIcon icon={faPencil} /></span>
-                <span className="transaction-delete" ><FontAwesomeIcon icon={faTrashCan} /></span>
+                <span className="transaction-delete" onClick={handleDelete}><FontAwesomeIcon icon={faTrashCan} /></span>
             </div>
         </div>
     );
