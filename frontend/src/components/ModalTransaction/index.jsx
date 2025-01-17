@@ -103,6 +103,18 @@ function ModalTransaction({showModal, setShowModal}) {
 
     // Affiche les sous-catégories si une catégorie parent est sélectionnée
     useEffect(() => {
+        // Pour l'édit de transaction, list_category est un objet (voir readme.md de l'API backend)
+        if (typeof transactionForm.list_category === 'object' && !Array.isArray(transactionForm.list_category)) {
+            const idCategory = categories.filter(category => category.name_category === transactionForm.list_category.category)[0].id_category;
+            const idSubCategories = [];
+            transactionForm.list_category.subcategories.forEach(subcategory => { 
+                idSubCategories.push(categories.filter(cat => cat.name_category === subcategory)[0].id_category);
+            });
+            setTransaction({...transactionForm, list_category: [idCategory, ...idSubCategories]});
+            selectSubCatégorie.current.setValue(idSubCategories.map(id => ({ value: id, label: categories.find(cat => cat.id_category === id).name_category })));
+            
+        }
+        
         if(transactionForm.list_category.length > 0){
             setSelectSubCategories(
                 <div className="form-group">
