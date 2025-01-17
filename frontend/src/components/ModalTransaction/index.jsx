@@ -20,20 +20,28 @@ function ModalTransaction({showModal, setShowModal}) {
 
     const handleChange = (e) => {
         setTransaction({
-            ...transaction,
+            ...transactionForm,
             [e.target.name]: e.target.value,
         });
+    };
 
+    // Note : React Select n'a pas les même gestion des événements que les inputs classiques
+    // ici target est un objet qui contient value 
+    const handleTypeChange = (e) => {
+        setTransaction({
+            ...transactionForm,
+            type_transaction: e.target.value
+        });
+    
         if(e.target.name === 'type_transaction' && e.target.value === 'revenu'){
             selectCatégorie.current.setValue({ value: 6, label: 'Revenus' });
         }
-
     };
     
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const transactionData = {...transaction, id_user: user};
+        const transactionData = {...transactionForm, id_user: user};
         const apiRoute = transactionData.id_transaction ? `/api/transactions/${transactionData.id_transaction}` : '/api/transactions';
         const apiMethod = transactionData.id_transaction ? 'PUT' : 'POST';
         
@@ -75,19 +83,27 @@ function ModalTransaction({showModal, setShowModal}) {
 
     // Pour le select des catégories parent
     const handleCategory = (e) => {
-        setCategory({ id_category: e.target.value, name_category: categories.find(cat => cat.id_category === parseInt(e.target.value)).name_category });
-        setTransaction({...transaction, list_category: [category.id_category]});
-
-        if(category.id_category !== 6){
-            selectType.current.setValue({ value: 'dépense', label: 'Dépense' });
+        const selectedCategory = categories.find(cat => cat.id_category === parseInt(e.target.value));
+        if (selectedCategory) {
+            setCategory({ id_category: e.target.value, name_category: selectedCategory.name_category });
+            setTransaction({...transactionForm, list_category: [selectedCategory.id_category]});
         }
-        
+        setTransaction({...transactionForm, list_category: [selectedCategory.id_category]});
     };
+
+    useEffect(() => { 
+        
+        if(category && category.name_category !== 'Revenus'){
+            selectType.current.setValue({ value: 'dépense', label: 'Dépense' });
+        } else if (category) {
+            selectType.current.setValue({ value: 'revenu', label: 'Revenu' });
+        }  
+          
+    }, [category]);
 
     // Affiche les sous-catégories si une catégorie parent est sélectionnée
     useEffect(() => {
-        console.log(transaction)
-        if(transaction.list_category.length > 0){
+        if(transactionForm.list_category.length > 0){
             setSelectSubCategories(
                 <div className="form-group">
                     <label htmlFor="subcategory">Sous-catégories</label>
@@ -96,7 +112,7 @@ function ModalTransaction({showModal, setShowModal}) {
                         name="list_category"
                         ref={selectSubCatégorie}
                         options={categories
-                            .filter(category => category.parent_id === parseInt(transaction.list_category[0]))
+                            .filter(category => category.parent_id === parseInt(transactionForm.list_category[0]))
                             .map(category => ({
                                 value: category.id_category,
                                 label: category.name_category
@@ -106,19 +122,22 @@ function ModalTransaction({showModal, setShowModal}) {
                         classNamePrefix="select"
                         onChange={(selectedOptions) => {
                             const selectedIds = selectedOptions.map(option => option.value);
-                            setTransaction({...transaction, list_category: [transaction.list_category[0], ...selectedIds]});
+                            setTransaction({...transactionForm, list_category: [transactionForm.list_category[0], ...selectedIds]});
                         }}
                         required
                     />
                 </div>
             );
         }
-    }, [transaction, categories]);
+    }, [transactionForm, categories, setTransaction]);
 
     // Si des catégories sont déjà défini dans la transaction, on clique et affiche les sous-catégories
     useEffect(() => {
-        setCategory({ id_category: transaction.list_category[0], name_category: categories.find(cat => cat.id_category === parseInt(transaction.list_category[0])).name_category });
-        }, [transaction.list_category, categories]);
+        const selectedCategory = categories.find(cat => cat.id_category === parseInt(transactionForm.list_category[0]));
+        if (selectedCategory) {
+            setCategory({ id_category: transactionForm.list_category[0], name_category: selectedCategory.name_category });
+        }
+    }, [transactionForm.list_category, categories]);
     
     // Récupère les catégories depuis l'API ou le cache
     useEffect(() => {
@@ -152,33 +171,33 @@ function ModalTransaction({showModal, setShowModal}) {
                 <form>
                     <div className="form-group">
                         <label htmlFor="title">Titre</label>
-                        <input type="text" name="title" id="title" placeholder='Titre de votre transaction' value={transaction.title} onChange={handleChange} required />
+                        <input type="text" name="title" id="title" placeholder='Titre de votre transaction' value={transactionForm.title} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="type">Type</label>
                         <Select
                             name="type_transaction"
-                            value={transaction.type_transaction ? { value: transaction.type_transaction, label: transaction.type_transaction.charAt(0).toUpperCase() + transaction.type_transaction.slice(1) } : null}
+                            value={transactionForm.type_transaction ? { value: transactionForm.type_transaction, label: transactionForm.type_transaction.charAt(0).toUpperCase() + transactionForm.type_transaction.slice(1) } : null}
                             options={[
                                 { value: 'revenu', label: 'Revenu' },
                                 { value: 'dépense', label: 'Dépense' }
                             ]}
-                            onChange={(selectedOption) => handleChange({ target: { name: 'type_transaction', value: selectedOption.value } })}
+                            onChange={(selectedOption) => handleTypeChange({ target : { value: selectedOption.value, name: selectedOption.name } })}
                             ref={selectType}
                             required
                         />
                     </div>
                     <div className="form-group">
                         <label htmlFor="amount">Montant (€)</label>
-                        <input type="number" name="amount" id="amount" value={transaction.amount}  onChange={handleChange} required/>
+                        <input type="number" name="amount" id="amount" value={transactionForm.amount}  onChange={handleChange} required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="date">Date</label>
-                        <input type="date" name="date" id="date" value={transaction.date} onChange={handleChange} required/>
+                        <input type="date" name="date" id="date" value={transactionForm.date} onChange={handleChange} required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="place">Lieu</label>
-                        <input type="text" name="place" id="place" value={transaction.place} onChange={handleChange} required/>
+                        <input type="text" name="place" id="place" value={transactionForm.place} onChange={handleChange} required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="category">Catégorie</label>
@@ -192,7 +211,7 @@ function ModalTransaction({showModal, setShowModal}) {
                                     value: category.id_category,
                                     label: category.name_category
                                 }))}
-                            onChange={(selectedOption) => handleCategory({ target: { value: selectedOption.value } })}
+                            onChange={(selectedOption) => handleCategory({ target: { value: selectedOption.value, name: selectedOption.name } })}
                             required
                         />
                     </div>

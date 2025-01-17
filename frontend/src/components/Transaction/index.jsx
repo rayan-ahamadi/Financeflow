@@ -1,6 +1,7 @@
 import "../../styles/Transaction.css";
 import PropTypes from 'prop-types';
 import  { useContext } from 'react';
+import { TransactionContext } from '../../context/TransactionContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
@@ -28,6 +29,7 @@ function Transaction({transaction, setShowModal}) {
     );
 }
 Transaction.propTypes = {
+    setShowModal: PropTypes.func.isRequired,
     transaction: PropTypes.shape({
         id_transaction: PropTypes.number.isRequired,
         title: PropTypes.string.isRequired,
