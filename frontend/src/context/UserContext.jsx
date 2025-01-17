@@ -11,11 +11,7 @@ const UserProvider = ({children}) => {
     const [userData, setUserData] = useState(null);
     const [userloading, setUserLoading] = useState(true);
     
-    useEffect(() => {
-        if (!user || userData) {
-            return;
-        }
-
+    const fetchUserData = () => { 
         fetch(`/api/utilisateurs/${user}`, {
             method: 'GET',
             headers: {
@@ -36,10 +32,21 @@ const UserProvider = ({children}) => {
         .catch((err) => {
             alert(err.message);
         });
+    }
+
+
+
+
+
+    useEffect(() => {
+        if (!user || userData) {
+            return;
+        }
+        fetchUserData()
     }, [user,userData]);
 
     return (
-        <UserContext.Provider value={{userData, setUserData,userloading}}>
+        <UserContext.Provider value={{userData, setUserData,userloading, fetchUserData}}>
             {children}
         </UserContext.Provider>
     );

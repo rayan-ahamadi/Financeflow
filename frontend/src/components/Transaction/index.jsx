@@ -2,11 +2,13 @@ import "../../styles/Transaction.css";
 import PropTypes from 'prop-types';
 import  { useContext } from 'react';
 import { TransactionContext } from '../../context/TransactionContext';
+import { UserContext } from "../../context/UserContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 function Transaction({transaction, setShowModal}) {
     const { setTransactionForm, fetchTransactions } = useContext(TransactionContext);
+    const { fetchUserData } = useContext(UserContext);
     const transactionTypeSign = transaction.type_transaction === "revenu" ? "+" : "-";
 
     const handleEditClick = () => {
@@ -30,6 +32,7 @@ function Transaction({transaction, setShowModal}) {
         .then((data) => {
             if (data.message === "La transaction a été supprimé avec succès") {
                 fetchTransactions();
+                fetchUserData();
             }
         })
         .catch((error) => {

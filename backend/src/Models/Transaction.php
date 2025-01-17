@@ -191,6 +191,34 @@ class Transaction {
     }
 
     public function delete(int $id) : bool {
+        // Changer le solde de l'utilisateur
+        try {
+            $stmt = $this->pdo->prepare("SELECT id_user, amount, type_transaction FROM transaction WHERE id_transaction = :id_transaction");
+            $stmt->bindParam(':id_transaction', $id, \PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
+
+            $idUser = $result["id_user"];
+            $amount = $result["amount"];
+            $typeTransaction = $result["type_transaction"];
+
+            if ($typeTransaction === "revenu"){
+                $stmtUser = $this->pdo->prepare("UPDATE user SET balance = balance - :amount WHERE id_user = :id_user");
+            }
+            else {
+                $stmtUser = $this->pdo->prepare("UPDATE user SET balance = balance + :amount WHERE id_user = :id_user");
+            }
+            $stmtUser->bindParam(':amount', $amount, \PDO::PARAM_STR);
+            $stmtUser->bindParam(':id_user', $idUser, \PDO::PARAM_INT);
+            $stmtUser->execute();
+        }
+        catch (PDOException $e) {
+            echo json_encode(["message" => "Erreur lors de la modification du solde de l'utilisateur", "PDO" => $e->getMessage()]);
+            exit;
+        }
+
+
+
         // supprimer les catégories de la transaction
         try{
             $stmtDelCat = $this->pdo->prepare("DELETE FROM transactions_categories WHERE id_transaction = :id_transaction");
