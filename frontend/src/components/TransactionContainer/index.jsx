@@ -43,7 +43,7 @@ function TransactionContainer({limit = null, page = "home", setShowModal}) {
                 <h3>Transactions</h3>
                 <div className="action">
                     {!showAction || <Link to="/transactions">Tout afficher</Link>}
-                    {showAction ? <Link to="/transactions" state={{showModal:true}} aria-label="Ajouter une transaction"><FontAwesomeIcon icon={faCirclePlus} /></Link> : addTransaction}
+                    {showAction ? <Link to="/transactions/:modalParam" aria-label="Ajouter une transaction"><FontAwesomeIcon icon={faCirclePlus} /></Link> : addTransaction}
                 </div>
             </div>
             <div className="transaction-content">

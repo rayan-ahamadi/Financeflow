@@ -41,6 +41,7 @@ function App(){
           {/*Routes privées*/}
           <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path='/transactions' element={<PrivateRoute><Transactions /></PrivateRoute>} />
+          <Route path='/transactions/:modalParam' element={<PrivateRoute><Transactions /></PrivateRoute>} />
           {/*Routes non existantes*/}
           <Route path="*" element={<Error />} />
         </Routes>

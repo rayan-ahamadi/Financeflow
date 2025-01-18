@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.1deb1
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1
--- Généré le : lun. 02 déc. 2024 à 15:18
--- Version du serveur : 10.4.28-MariaDB
--- Version de PHP : 8.2.4
+-- Hôte : localhost:3306
+-- Généré le : sam. 18 jan. 2025 à 12:51
+-- Version du serveur : 10.11.6-MariaDB-0+deb12u1
+-- Version de PHP : 8.2.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -91,7 +91,7 @@ CREATE TABLE `transaction` (
 --
 
 INSERT INTO `transaction` (`id_transaction`, `title`, `type_transaction`, `amount`, `date`, `place`, `currency_code`, `currency_symbol`, `id_user`) VALUES
-(6, 'NEWER-MEDIA salaire 11-24', 'revenu', 1221.02, '2024-11-29', 'Newer-Media', 'EUR', '€', 1);
+(11, 'Bourse La Plateforme', 'revenu', 2.00, '2025-01-05', 'La Plateforme Formation', 'EUR', '€', 6);
 
 -- --------------------------------------------------------
 
@@ -100,7 +100,6 @@ INSERT INTO `transaction` (`id_transaction`, `title`, `type_transaction`, `amoun
 --
 
 CREATE TABLE `transactions_categories` (
-  `id` int(11) NOT NULL,
   `id_transaction` int(11) NOT NULL,
   `id_category` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -109,8 +108,9 @@ CREATE TABLE `transactions_categories` (
 -- Déchargement des données de la table `transactions_categories`
 --
 
-INSERT INTO `transactions_categories` (`id`, `id_transaction`, `id_category`) VALUES
-(1, 6, 6);
+INSERT INTO `transactions_categories` (`id_transaction`, `id_category`) VALUES
+(11, 6),
+(11, 27);
 
 -- --------------------------------------------------------
 
@@ -124,15 +124,17 @@ CREATE TABLE `user` (
   `password` varchar(255) NOT NULL,
   `name` varchar(50) NOT NULL,
   `surname` varchar(50) NOT NULL,
-  `balance` decimal(10,2) NOT NULL DEFAULT 0.00
+  `balance` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `role` enum('user','admin') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `user`
 --
 
-INSERT INTO `user` (`id_user`, `email`, `password`, `name`, `surname`, `balance`) VALUES
-(1, 'rayan.ahamadi@laplateforme.io', 'eqmjkgberbiorebioerbgioerb', 'Rayan', 'Ahamadi', 2442.04);
+INSERT INTO `user` (`id_user`, `email`, `password`, `name`, `surname`, `balance`, `role`) VALUES
+(6, 'rayanahamadi13@gmail.com', '$2y$10$pPQ8N7DvmGeg4.xkmBnyx.5uAG6m.9bfm1rdzRhl00h2FA9uBY5ym', 'Ahamadi', 'Rayan', 302.00, 'user'),
+(7, 'rayan.ahamadi@laplateforme.io', '$2y$10$GVG5t/aqQ8m1a1wmHD2DYeXzot6OMbOwDEe1jyHq2TN9mgLB3eMiG', 'Ahamadi', 'Rayan', 0.00, 'user');
 
 --
 -- Index pour les tables déchargées
@@ -156,7 +158,6 @@ ALTER TABLE `transaction`
 -- Index pour la table `transactions_categories`
 --
 ALTER TABLE `transactions_categories`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `id_transaction` (`id_transaction`),
   ADD KEY `id_category` (`id_category`);
 
@@ -181,19 +182,13 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT pour la table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `id_transaction` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT pour la table `transactions_categories`
---
-ALTER TABLE `transactions_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_transaction` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Contraintes pour les tables déchargées
