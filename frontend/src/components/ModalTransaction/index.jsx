@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { TransactionContext } from '../../context/TransactionContext';
+import { UserContext } from '../../context/UserContext';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
@@ -11,12 +12,14 @@ function ModalTransaction({showModal, setShowModal}) {
     const { user } = useContext(AuthContext);
     const { transactionForm , setTransactionForm: setTransaction } = useContext(TransactionContext);
     const { fetchTransactions } = useContext(TransactionContext);
+    const { fetchUserData } = useContext(UserContext);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
     const [selectSubCategories, setSelectSubCategories] = useState(false);
     const selectCatégorie = useRef(null);
     const selectSubCatégorie = useRef(null);
     const selectType = useRef(null);
+    const text = transactionForm.id_transaction ? 'Modifier' : 'Ajouter';
 
     const handleChange = (e) => {
         setTransaction({
@@ -61,6 +64,7 @@ function ModalTransaction({showModal, setShowModal}) {
             } else if(data.message === "La transaction a été modifié avec succès"){
                 alert("Transaction modifiée avec succès");
                 fetchTransactions(); // Mettre à jour les transactions après la modification
+                fetchUserData(); // Mettre à jour les transactions après la modification
             }
         })
         .catch(error => console.error('Error:', error))
@@ -103,6 +107,7 @@ function ModalTransaction({showModal, setShowModal}) {
 
     // Affiche les sous-catégories si une catégorie parent est sélectionnée
     useEffect(() => {
+
         // Pour l'édit de transaction, list_category est un objet (voir readme.md de l'API backend)
         if (typeof transactionForm.list_category === 'object' && !Array.isArray(transactionForm.list_category)) {
             const idCategory = categories.filter(category => category.name_category === transactionForm.list_category.category)[0].id_category;
@@ -110,38 +115,43 @@ function ModalTransaction({showModal, setShowModal}) {
             transactionForm.list_category.subcategories.forEach(subcategory => { 
                 idSubCategories.push(categories.filter(cat => cat.name_category === subcategory)[0].id_category);
             });
+
+            if(idSubCategories.length > 0 || category){
+                setSelectSubCategories(
+                    <div className="form-group">
+                        <label htmlFor="subcategory">Sous-catégories</label>
+                        <Select
+                            isMulti
+                            name="list_category"
+                            ref={selectSubCatégorie}
+                            options={categories
+                                .filter(category => category.parent_id === parseInt(transactionForm.list_category[0]))
+                                .map(category => ({
+                                    value: category.id_category,
+                                    label: category.name_category
+                                }))
+                            }
+                            className="basic-multi-select"
+                            classNamePrefix="select"
+                            onChange={(selectedOptions) => {
+                                const selectedIds = selectedOptions.map(option => option.value);
+                                setTransaction({...transactionForm, list_category: [transactionForm.list_category[0], ...selectedIds]});
+                            }}
+                            required
+                        />
+                    </div>
+                );
+            }
+
             setTransaction({...transactionForm, list_category: [idCategory, ...idSubCategories]});
-            selectSubCatégorie.current.setValue(idSubCategories.map(id => ({ value: id, label: categories.find(cat => cat.id_category === id).name_category })));
+            if (selectSubCatégorie.current && idSubCategories.length > 0) {
+                selectSubCatégorie.current.setValue(idSubCategories.map(id => ({ value: id, label: categories.find(cat => cat.id_category === id).name_category })));
+            }
             
         }
         
-        if(transactionForm.list_category.length > 0){
-            setSelectSubCategories(
-                <div className="form-group">
-                    <label htmlFor="subcategory">Sous-catégories</label>
-                    <Select
-                        isMulti
-                        name="list_category"
-                        ref={selectSubCatégorie}
-                        options={categories
-                            .filter(category => category.parent_id === parseInt(transactionForm.list_category[0]))
-                            .map(category => ({
-                                value: category.id_category,
-                                label: category.name_category
-                            }))
-                        }
-                        className="basic-multi-select"
-                        classNamePrefix="select"
-                        onChange={(selectedOptions) => {
-                            const selectedIds = selectedOptions.map(option => option.value);
-                            setTransaction({...transactionForm, list_category: [transactionForm.list_category[0], ...selectedIds]});
-                        }}
-                        required
-                    />
-                </div>
-            );
-        }
-    }, [transactionForm, categories, setTransaction]);
+        
+    }, [transactionForm, categories, setTransaction,selectSubCategories]);
 
     // Si des catégories sont déjà défini dans la transaction, on clique et affiche les sous-catégories
     useEffect(() => {
@@ -176,7 +186,7 @@ function ModalTransaction({showModal, setShowModal}) {
     return (
         <div className={showModal ? "modal display-block" : "modal display-none"}>
             <div className="modal-header">
-                <h3>Ajouter une transaction</h3>
+                <h3>{text} une transaction</h3>
                 <span className='close-modal' onClick={() => setShowModal(false)}><FontAwesomeIcon icon={faCircleXmark} /></span>
             </div>
             <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
@@ -231,7 +241,7 @@ function ModalTransaction({showModal, setShowModal}) {
                 </form>
             </div>
             <div className="modal-footer">
-                <button onClick={handleSubmit}>Ajouter</button>
+                <button onClick={handleSubmit}>{text}</button>
             </div>
         </div>
     );

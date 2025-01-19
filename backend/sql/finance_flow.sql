@@ -90,9 +90,6 @@ CREATE TABLE `transaction` (
 -- Déchargement des données de la table `transaction`
 --
 
-INSERT INTO `transaction` (`id_transaction`, `title`, `type_transaction`, `amount`, `date`, `place`, `currency_code`, `currency_symbol`, `id_user`) VALUES
-(11, 'Bourse La Plateforme', 'revenu', 2.00, '2025-01-05', 'La Plateforme Formation', 'EUR', '€', 6);
-
 -- --------------------------------------------------------
 
 --
@@ -108,9 +105,6 @@ CREATE TABLE `transactions_categories` (
 -- Déchargement des données de la table `transactions_categories`
 --
 
-INSERT INTO `transactions_categories` (`id_transaction`, `id_category`) VALUES
-(11, 6),
-(11, 27);
 
 -- --------------------------------------------------------
 
@@ -132,11 +126,7 @@ CREATE TABLE `user` (
 -- Déchargement des données de la table `user`
 --
 
-INSERT INTO `user` (`id_user`, `email`, `password`, `name`, `surname`, `balance`, `role`) VALUES
-(6, 'rayanahamadi13@gmail.com', '$2y$10$pPQ8N7DvmGeg4.xkmBnyx.5uAG6m.9bfm1rdzRhl00h2FA9uBY5ym', 'Ahamadi', 'Rayan', 302.00, 'user'),
-(7, 'rayan.ahamadi@laplateforme.io', '$2y$10$GVG5t/aqQ8m1a1wmHD2DYeXzot6OMbOwDEe1jyHq2TN9mgLB3eMiG', 'Ahamadi', 'Rayan', 0.00, 'user');
 
---
 -- Index pour les tables déchargées
 --
 

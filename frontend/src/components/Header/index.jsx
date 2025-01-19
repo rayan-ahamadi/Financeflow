@@ -1,7 +1,7 @@
 import '../../styles/Header.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faArrowRightArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faHouse, faArrowRightArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 
 const Header = () => {
@@ -17,11 +17,6 @@ const Header = () => {
           <Link to="/transactions">
             <span className="header-menu-item" aria-label="Transactions">
               <FontAwesomeIcon icon={faArrowRightArrowLeft} />
-            </span>
-          </Link>
-          <Link to="/settings">
-            <span className="header-menu-item" aria-label="Paramètres">
-              <FontAwesomeIcon icon={faGear} />
             </span>
           </Link>
         </nav>

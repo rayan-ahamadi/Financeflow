@@ -5,13 +5,21 @@ import { TransactionContext } from '../../context/TransactionContext';
 import { UserContext } from "../../context/UserContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { useLocation } from "react-router-dom";
 
 function Transaction({transaction, setShowModal}) {
     const { setTransactionForm, fetchTransactions } = useContext(TransactionContext);
     const { fetchUserData } = useContext(UserContext);
+    const location = useLocation();
     const transactionTypeSign = transaction.type_transaction === "revenu" ? "+" : "-";
 
     const handleEditClick = () => {
+
+        if (location.pathname !== "/transactions") {
+            window.location.href = "/transactions/"
+            return;
+        }
+
         setTransactionForm({ ...transaction, id_transaction: transaction.id_transaction });
         setShowModal(true);
     }
