@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from "react-router-dom";
 
-function Transaction({transaction, setShowModal}) {
+function Transaction({transaction, setShowModal,page}) {
     const { setTransactionForm, fetchTransactions } = useContext(TransactionContext);
     const { fetchUserData } = useContext(UserContext);
     const location = useLocation();
@@ -56,10 +56,11 @@ function Transaction({transaction, setShowModal}) {
             <div className="transaction-date">{transaction.date}</div>
             <div className="transaction-place">{transaction.place}</div>
             <div className="transaction-category">{transaction.list_category.category}</div>
-            <div className="transaction-action">
+            { page !== "home" && <div className="transaction-action">
                 <span className="transaction-edit" onClick={handleEditClick} ><FontAwesomeIcon icon={faPencil} /></span>
                 <span className="transaction-delete" onClick={handleDelete}><FontAwesomeIcon icon={faTrashCan} /></span>
             </div>
+}
         </div>
     );
 }

@@ -28,7 +28,7 @@ class AuthMiddleware
         http_response_code(401);
         echo json_encode([
             'error' => 'Unauthorized',
-            'received_headers' => $headers, // Pour déboguer
+            'received_headers' => $headers, 
         ]);
         exit();
     }

@@ -16,7 +16,7 @@
 }
 
 .transaction-head a {
-    color: black;
+    color: white;
 }
 
 .transaction-head a:hover {
@@ -24,6 +24,11 @@
 }
 
 .transaction-content ul {
-    /*list-style: none;*/
+    list-style: none;
     padding: 0;
+}
+
+.transaction-container{
+    width: 85%;
+    margin: auto;
 }

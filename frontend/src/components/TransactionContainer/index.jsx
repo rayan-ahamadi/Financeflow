@@ -72,7 +72,7 @@ function TransactionContainer({limit = null, page = "home", setShowModal}) {
                <ul>
                     {emptyMessage || newTransactions.map((transaction) => (
                         <li key={transaction.id}>
-                            <Transaction key={transaction.id} transaction={transaction} setShowModal={setShowModal} />
+                            <Transaction key={transaction.id} transaction={transaction} setShowModal={setShowModal} page={page}/>
                         </li>
                     ))}
                 </ul> 

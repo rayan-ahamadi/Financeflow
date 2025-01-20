@@ -4,12 +4,10 @@
 
 .transactions-container > h1{
     font-size: 45px;
-    text-align: center;
 }
 
 .addTransaction {
     cursor: pointer;
-    color: black;
 }
 
 .addTransaction:hover {

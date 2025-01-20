@@ -2,7 +2,12 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    align-items: center;
     gap: 1rem;
+    background-color: #A3C4F3;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
 }
 
 .transaction-action {

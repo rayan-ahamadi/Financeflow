@@ -14,7 +14,6 @@
 .welcome-container > .welcome-background {
   height: 100%;
   width: 60%;
-  background-image: url("../assets/image/Background.png");
   background-repeat: no-repeat;
   background-size: cover;
 }
