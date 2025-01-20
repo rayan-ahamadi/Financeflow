@@ -13,9 +13,16 @@
 
 .welcome-container > .welcome-background {
   height: 100%;
-  width: 60%;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.welcome-background::before{
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .laucher-buttons {
@@ -36,7 +43,7 @@
   background-color: #160430;
   color: white;
   height: 100%;
-  width: 40%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
